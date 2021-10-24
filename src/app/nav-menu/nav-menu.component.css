@@ -15,5 +15,18 @@ a.navbar-brand {
   
   .box-shadow {
     box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+  }  
+
+
+  .nav-link:hover {
+    background-color: #843304;
+    color: white !important;
   }
-  
+
+  .link-active {
+    background-color: #843304;    
+  }
+
+  .link-active a {    
+    color: white !important;
+  }
