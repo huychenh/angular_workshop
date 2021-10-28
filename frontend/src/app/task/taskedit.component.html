@@ -1,0 +1,42 @@
+<div class="row">
+    <div class="btn-back">
+        <button type="button" class="btn btn-danger">Back</button>        
+    </div>
+    <div class="border">
+        <div class="topnav-right">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#view">View</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#edit">Edit</a>
+            </li>
+        </ul>
+    </div>
+        
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane container active">
+        <form>
+            <div class="form-group">
+            <label for="title"><strong>Title</strong></label>
+            <input type="text" class="form-control" id="title" placeholder="Insert the title..." />
+            </div>
+            <div class="form-group">
+            <textarea class="form-control" id="description" rows="3" placeholder="Insert a suitable description..."></textarea>
+            </div>
+            <div class="form-group">
+            <div class="radio">
+                <label><input type="radio" name="radiostatus" id="radioNew" value="New" checked>&nbsp;New</label>&nbsp;
+                <label><input type="radio" name="radiostatus" id="radioProgress" value="Progress">&nbsp;In progress</label>&nbsp;
+                <label><input type="radio" name="radiostatus" id="radioDone" value="Done">&nbsp;Done</label>      
+            </div>                         
+            </div>            
+            <button type="submit" class="btn btn-primary">Save</button> &nbsp;
+            <button type="button" class="btn btn-default btn_default_color">Cancel</button>
+        </form>
+        </div>
+    </div>
+    </div>
+</div>

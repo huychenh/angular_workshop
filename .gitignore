@@ -4,3 +4,5 @@ backend/Workshop.Authentication/obj/
 backend/Workshop.Authentication/bin/
 backend/Workshop.APIs/obj/
 backend/Workshop.APIs/bin/
+frontend/node_modules/
+frontend/dist/

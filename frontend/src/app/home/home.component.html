@@ -1,0 +1,24 @@
+<div class="container">
+    <!--List-->
+    <div class="row" id="List" *ngIf="isModeList">
+      <div class="col-sm">                   
+          <app-tasknewlist (messageToEmit)="getModeMessage($event)"></app-tasknewlist>
+      </div>
+      <div class="col-sm">
+        <app-taskprogresslist></app-taskprogresslist>
+      </div>
+      <div class="col-sm">
+        <app-taskdonelist></app-taskdonelist>
+      </div>
+    </div>
+
+    <!--Add-->
+    <div class="row" id="Add" *ngIf="isModeAdd"> 
+      <app-taskcreate></app-taskcreate>
+    </div>
+
+    <!--Edit-->
+    <div class="row" id="Edit" *ngIf="isModeEdit">
+      <app-taskedit></app-taskedit>
+    </div>
+</div>
