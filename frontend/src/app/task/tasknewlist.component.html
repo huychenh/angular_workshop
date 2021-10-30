@@ -13,7 +13,7 @@
                                 <div class="widget-content p-0">
                                     <div class="widget-content-wrapper">													
                                         <div class="widget-heading">
-                                            <a href="#" title="{{ item.title }}">{{ item.title }}</a>
+                                            <a href="#" title="{{ item.title }}" (click)="actionTask('mode_edit', item.id)">{{ item.title }}</a>
                                         </div>
                                     </div>
                                 </div>
@@ -21,7 +21,7 @@
                                     <hr />
                                 </div>
                             </div>
-                            <button class="btn btn-primary" (click)="addTask('mode_add')">Add Task</button>
+                            <button class="btn btn-primary" (click)="actionTask('mode_add')">Add Task</button>
                         </li>
                     </ul>
                 </div>

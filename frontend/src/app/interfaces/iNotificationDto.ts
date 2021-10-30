@@ -1,3 +1,6 @@
+/**
+ * Interface for Notification
+ */
 export interface INotificationDto {
     id: number;
     notificationCode: number;

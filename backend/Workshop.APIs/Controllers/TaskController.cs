@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
 using System.Net;
+using Workshop.APIs.Models;
 using Workshop.APIs.Repositories;
 using Workshop.Common.Models;
 using Workshop.Common.Responses;
@@ -85,20 +89,59 @@ namespace Workshop.APIs.Controllers
             return response;
         }
 
-        [HttpDelete]
+        [HttpPut]
         [Route("delete")]
-        public TaskResponse Delete(TaskModel model)
+        public TaskResponse Delete(TaskViewModel.Delete model)
         {
             var response = new TaskResponse();
+            var list = new ListDictionary();
+
             try
             {
-                bool result = _taskRepository.Delete(model);
-                if (result)
+                if (ModelState.IsValid)
                 {
+                    var obj = new TaskModel
+                    {
+                        Id = model.Id,
+                        ModifiedBy = model.ModifiedBy
+                    };
+
+                    bool result = _taskRepository.Delete(obj);
+                    if (result)
+                    {
+                        response.Notification = new NotificationDto
+                        {
+                            NotificationCode = HttpStatusCode.OK,
+                            InfoMessage = "Delete sucessfully - Id: " + model.Id + "."
+                        };
+                    }
+                    else
+                    {
+                        response.Notification = new NotificationDto
+                        {
+                            NotificationCode = HttpStatusCode.NotFound,
+                            InfoMessage = "Delete unsucessfully - Id: " + model.Id + "."
+                        };
+                    }
+                }
+                else
+                {
+                    IEnumerable<Error> lst = AllErrors();
+                    foreach (var item in lst)
+                    {
+                        //Check exist keys, if not we will add into list.
+                        if (!list.Contains(item.Key))
+                        {
+                            var errors = lst.Where(p => p.Key == item.Key).Select(p => p.Message).ToList();
+                            list.Add(item.Key, errors);
+                        }
+                    }
+
                     response.Notification = new NotificationDto
                     {
-                        NotificationCode = HttpStatusCode.OK,
-                        InfoMessage = "Delete successfully - Id: " + model.Id + "."
+                        NotificationCode = HttpStatusCode.BadRequest,
+                        ErrorMessage = "",
+                        DetailErrorMessage = list
                     };
                 }
             }
@@ -116,31 +159,63 @@ namespace Workshop.APIs.Controllers
 
         [HttpPost]
         [Route("create")]
-        public TaskResponse Create(TaskModel model)
+        public TaskResponse Create(TaskViewModel.Create model)
         {
             var response = new TaskResponse();
+            var list = new ListDictionary();
+
             try
             {
-                int id = _taskRepository.Insert(model);
-                if (id > 0)
+                //Validate model
+                if (string.IsNullOrEmpty(model.Title))
                 {
-                    response.Notification = new NotificationDto
+                    ModelState.AddModelError("Title", "Title required");
+                }
+
+                if (ModelState.IsValid)
+                {
+                    var obj = new TaskModel 
                     {
-                        NotificationCode = HttpStatusCode.OK,
-                        InfoMessage = "Insert sucessfully - Id: " + id + "."
+                        Title = model.Title,
+                        Description = model.Description,
+                        Status = model.Status
                     };
 
-                    response.Task = new TaskModel()
+                    obj.CreatedBy = User.Identity.IsAuthenticated ? User.Identity.Name : "System";
+
+                    int id = _taskRepository.Insert(obj);
+                    if (id > 0)
                     {
-                        Id = id
-                    };
+                        response.Notification = new NotificationDto
+                        {
+                            NotificationCode = HttpStatusCode.OK,
+                            InfoMessage = "Insert sucessfully - Id: " + id + "."
+                        };
+
+                        response.Task = new TaskModel()
+                        {
+                            Id = id
+                        };
+                    }
                 }
                 else
                 {
+                    IEnumerable<Error> lst = AllErrors();
+                    foreach (var item in lst)
+                    {
+                        //Check exist keys, if not we will add into list.
+                        if (!list.Contains(item.Key))
+                        {
+                            var errors = lst.Where(p => p.Key == item.Key).Select(p => p.Message).ToList();
+                            list.Add(item.Key, errors);
+                        }
+                    }
+
                     response.Notification = new NotificationDto
                     {
-                        NotificationCode = HttpStatusCode.InternalServerError,
-                        InfoMessage = "Insert unsucessfully."
+                        NotificationCode = HttpStatusCode.BadRequest,
+                        ErrorMessage = "",
+                        DetailErrorMessage = list
                     };
                 }
             }
@@ -158,26 +233,74 @@ namespace Workshop.APIs.Controllers
 
         [HttpPut]
         [Route("edit")]
-        public TaskResponse Edit(TaskModel model)
+        public TaskResponse Edit(TaskViewModel.Edit model)
         {
             var response = new TaskResponse();
+            var list = new ListDictionary();
+
             try
             {
-                bool result = _taskRepository.Update(model);
-                if (result)
+                //Validate model
+                if (model.Id <= 0)
                 {
-                    response.Notification = new NotificationDto
+                    ModelState.AddModelError("NotFound", "Task not found");
+                }
+
+                if (string.IsNullOrEmpty(model.Title))
+                {
+                    ModelState.AddModelError("Title", "Title required");
+                }
+
+                if (ModelState.IsValid)
+                {
+                    //Get Task by Id
+                    var obj = _taskRepository.GetById(model.Id);
+                    if(obj != null)
                     {
-                        NotificationCode = HttpStatusCode.OK,
-                        InfoMessage = "Update sucessfully - Id: " + model.Id + "."
-                    };
+                        obj.Title = model.Title;
+                        obj.Description = model.Description;
+                        obj.Status = model.Status;
+                        obj.ModifiedBy = User.Identity.IsAuthenticated ? User.Identity.Name : "System";
+
+                        bool result = _taskRepository.Update(obj);
+                        if (result)
+                        {
+                            response.Notification = new NotificationDto
+                            {
+                                NotificationCode = HttpStatusCode.OK,
+                                InfoMessage = "Update sucessfully - Id: " + model.Id + "."
+                            };
+                        }
+                        else
+                        {
+                            response.Notification = new NotificationDto
+                            {
+                                NotificationCode = HttpStatusCode.NotFound,
+                                InfoMessage = "Update unsucessfully - Id: " + model.Id + "."
+                            };
+                        }
+                    }
+
+                    
                 }
                 else
                 {
+                    IEnumerable<Error> lst = AllErrors();
+                    foreach (var item in lst)
+                    {
+                        //Check exist keys, if not we will add into list.
+                        if (!list.Contains(item.Key))
+                        {
+                            var errors = lst.Where(p => p.Key == item.Key).Select(p => p.Message).ToList();
+                            list.Add(item.Key, errors);
+                        }
+                    }
+
                     response.Notification = new NotificationDto
                     {
-                        NotificationCode = HttpStatusCode.InternalServerError,
-                        InfoMessage = "Update unsucessfully."
+                        NotificationCode = HttpStatusCode.BadRequest,
+                        ErrorMessage = "",
+                        DetailErrorMessage = list
                     };
                 }
             }
@@ -191,6 +314,25 @@ namespace Workshop.APIs.Controllers
             }
 
             return response;
+        }
+
+        /// <summary>
+        /// Get all errors with keys from ModelState.
+        /// </summary>
+        /// <returns>Enumerable</returns>
+        private IEnumerable<Error> AllErrors()
+        {
+            var result = new List<Error>();
+            var errorArr = ModelState.Where(ms => ms.Value.Errors.Any()).Select(x => new { x.Key, x.Value.Errors });
+
+            foreach (var error in errorArr)
+            {
+                var key = error.Key;
+                var fieldErrors = error.Errors.Select(error => new Error(key, error.ErrorMessage));
+                result.AddRange(fieldErrors);
+            }
+
+            return result;
         }
     }
 }

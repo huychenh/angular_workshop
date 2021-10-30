@@ -5,6 +5,7 @@ GO
 CREATE PROC Usp_InsertTask
 	@Title NVARCHAR(MAX)
 	,@Description NVARCHAR(MAX)	
+	,@Status NVARCHAR(100) = 'New'	
 	,@CreatedBy NVARCHAR(MAX) = 'System'	
 	,@Id INT OUT
 AS
@@ -13,6 +14,7 @@ BEGIN
 	(
 		[Title]
 		,[Description]
+		,[Status]
 		,[CreatedDate]
 		,[CreatedBy]
 		,[ModifiedDate]
@@ -23,6 +25,7 @@ BEGIN
 	(
 		@Title
 		,@Description
+		,@Status
 		,GETDATE()
 		,@CreatedBy
 		,GETDATE()

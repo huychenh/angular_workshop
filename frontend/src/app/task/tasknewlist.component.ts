@@ -1,8 +1,11 @@
 import { Component, EventEmitter, Output } from "@angular/core";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+
+import { GlobalComponent } from "../global.component";
 import { ITaskDto } from "../interfaces/iTaskDto";
 import { INotificationDto } from "../interfaces/iNotificationDto";
 import { ITaskResponse } from "../interfaces/iTaskResponse";
+import { ITaskEvent } from "../interfaces/iTaskEvent";
 
 @Component({
     selector: 'app-tasknewlist',    
@@ -28,7 +31,7 @@ export class TaskNewListComponent {
     public errors: string[] = [];
     public infoMessage: string = "";
     public isLoading: boolean = false;
-    public apiBaseUrl: string = "https://localhost:44363/api/";
+    public apiBaseUrl: string = GlobalComponent.apiBaseUrl;
 
     //Default headers for http.
     private httpOptions = {
@@ -38,7 +41,7 @@ export class TaskNewListComponent {
     };
 
     //Using Output to send message to Parent Component
-    @Output() messageToEmit = new EventEmitter<string>();
+    @Output() eventToEmit = new EventEmitter<ITaskEvent>();
     
     constructor(http: HttpClient) {
         this.httpProtocol = http;
@@ -47,8 +50,17 @@ export class TaskNewListComponent {
         this.getAll(this.taskStatus);
     }
 
-    addTask(message: string) {
-        this.messageToEmit.emit(message);
+    /**
+     * 
+     * @param action: action Mode (mode_list | mode_add | mode_edit)
+     * @param taskId: taskId 
+     */
+    public actionTask(action: string, taskId: number = 0): void {        
+        var taskEvent: ITaskEvent = {
+            taskId : taskId,
+            actionMode : action
+        };
+        this.eventToEmit.emit(taskEvent);
     }
 
      /**
@@ -74,7 +86,7 @@ export class TaskNewListComponent {
     /**
      * Set errors for the error array.
      */
-    private setErrors(errorArr: any) {
+    private setErrors(errorArr: any): any[] {
         var result = [];
 
         if (errorArr.hasOwnProperty("Title")) {

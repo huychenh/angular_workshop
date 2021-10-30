@@ -1,9 +1,11 @@
-import { Component } from "@angular/core";
+import { Component, EventEmitter, Output } from "@angular/core";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
+import { GlobalComponent } from "../global.component";
 import { ITaskDto } from "../interfaces/iTaskDto";
 import { INotificationDto } from "../interfaces/iNotificationDto";
 import { ITaskResponse } from "../interfaces/iTaskResponse";
+import { ITaskEvent } from "../interfaces/iTaskEvent";
 
 @Component({
     selector: 'app-taskprogresslist',    
@@ -30,7 +32,7 @@ export class TaskProgressListComponent {
     public errors: string[] = [];
     public infoMessage: string = "";
     public isLoading: boolean = false;
-    public apiBaseUrl: string = "https://localhost:44363/api/";
+    public apiBaseUrl: string = GlobalComponent.apiBaseUrl;
 
     //Default headers for http.
     private httpOptions = {
@@ -39,6 +41,8 @@ export class TaskProgressListComponent {
         })
     };
 
+    //Using Output to send message to Parent Component
+    @Output() eventToEmit = new EventEmitter<ITaskEvent>();
 
     constructor(http: HttpClient) {
         this.httpProtocol = http;
@@ -67,6 +71,18 @@ export class TaskProgressListComponent {
         });
     }
 
+    /**
+     * 
+     * @param action: action Mode (mode_list | mode_add | mode_edit)
+     * @param taskId: taskId 
+     */
+    public actionTask(action: string, taskId: number = 0): void {        
+        var taskEvent: ITaskEvent = {
+            taskId : taskId,
+            actionMode : action
+        };
+        this.eventToEmit.emit(taskEvent);
+    }
 
     /**
      * Set errors for the error array.

@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
+import { GlobalComponent } from "../global.component";
 import { ITaskDto } from "../interfaces/iTaskDto";
 import { INotificationDto } from "../interfaces/iNotificationDto";
 import { ITaskResponse } from "../interfaces/iTaskResponse";
@@ -22,6 +23,7 @@ export class TaskDoneListComponent {
         id: 0,
         title: "",
         description: "",
+        status: "",
         createdDate: "",
         createdBy: "",
         modifiedDate: "",
@@ -43,15 +45,10 @@ export class TaskDoneListComponent {
     public errors: string[] = [];
     public infoMessage: string = "";
     public isLoading: boolean = false;
-    public apiBaseUrl: string = "https://localhost:44363/api/";
 
-    //Default headers for http.
-    private httpOptions = {
-        headers: new HttpHeaders({
-        "Content-Type": "application/json"
-        })
-    };
-
+    public isActiveTaskItem: boolean = false;
+    public idActiveTaskItem: number = 0;
+    public apiBaseUrl: string = GlobalComponent.apiBaseUrl;
 
     constructor(http: HttpClient) {
         this.httpProtocol = http;
@@ -100,8 +97,13 @@ export class TaskDoneListComponent {
         return result;
     }
 
-    public toggleShow() {
+    /**
+     * toggleShow function
+     */
+    public toggleShow(): void {
         this.isShown = !this.isShown;
+        this.isActiveTaskItem = this.isShown;
+        this.idActiveTaskItem = 0;
     }
 
     /**
@@ -109,6 +111,9 @@ export class TaskDoneListComponent {
      * @param id 
      */
     public detail(id: number) {
+        this.idActiveTaskItem = id;
+        this.isActiveTaskItem = true;
+
         this.isShown = true;
         this.isLoading = true;
 
@@ -125,4 +130,12 @@ export class TaskDoneListComponent {
         });
     }
 
+    /**
+     * Process active task item
+     * @param id : TaskId
+     * @returns 
+     */
+    public isActiveItem(id: number) {        
+        return (id == this.idActiveTaskItem && this.isActiveTaskItem);
+    }
 }

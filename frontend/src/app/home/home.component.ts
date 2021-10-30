@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { ITaskEvent } from "../interfaces/iTaskEvent";
 
 @Component({
     selector: 'app-home',    
@@ -8,11 +9,14 @@ import { Component } from "@angular/core";
 
 export class HomeComponent {
 
-    isModeList: boolean = false;
-    isModeAdd: boolean = false;
-    isModeEdit: boolean = false;
+    public isModeList: boolean = false;
+    public isModeAdd: boolean = false;
+    public isModeEdit: boolean = false;
 
-    actionMode: string = "";
+    private actionMode: string = "";
+
+    //taskId to send to taskedit component
+    public taskId: string = "";
 
 
     constructor() {
@@ -21,9 +25,13 @@ export class HomeComponent {
         this.isModeEdit = false;
     }
 
-    getModeMessage(message: string) {
-        this.actionMode = message;
-
+    /**
+     * Process action mode: mode_list | mode_add | mode_edit
+     * @param taskEvent : ITaskEvent
+     */
+    public getEvent(taskEvent: ITaskEvent): void {
+        this.actionMode = taskEvent.actionMode;
+        
         switch(this.actionMode) {
             case "mode_add": 
                 this.isModeList = false;
@@ -34,7 +42,8 @@ export class HomeComponent {
             case "mode_edit": 
                 this.isModeList = false;
                 this.isModeAdd = false;
-                this.isModeEdit = true;
+                this.isModeEdit = true;           
+                this.taskId = taskEvent.taskId.toString();
             break;
 
             default:
@@ -44,4 +53,5 @@ export class HomeComponent {
             break;
         }
     }
+    
 }

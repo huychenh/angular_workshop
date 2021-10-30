@@ -5,7 +5,8 @@ GO
 CREATE PROC Usp_UpdateTask
 	@Id INT
 	,@Title NVARCHAR(MAX)
-	,@Description NVARCHAR(MAX)	
+	,@Description NVARCHAR(MAX)
+	,@Status NVARCHAR(100) = 'New'	
 	,@IsActive BIT
 	,@IsDeleted BIT
 	,@ModifiedBy NVARCHAR(MAX) = 'System'
@@ -13,7 +14,8 @@ AS
 BEGIN
 	UPDATE [dbo].[Tasks]
 	SET [Title] = @Title
-		,[Description] = @Description		
+		,[Description] = @Description	
+		,[Status] = @Status
 		,[ModifiedDate] = GETDATE()
 		,[ModifiedBy] = @ModifiedBy
 		,[IsActive] = @IsActive

@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Workshop.Authentication.Models;
 using Workshop.Common.Models;
 
@@ -78,7 +77,6 @@ namespace Workshop.APIs.Repositories.Implement
             }
         }
 
-
         public int Insert(TaskModel model)
         {
             int result;
@@ -95,13 +93,14 @@ namespace Workshop.APIs.Repositories.Implement
                     {
                         new SqlParameter("@Title", model.Title ?? (object)DBNull.Value),
                         new SqlParameter("@Description", model.Description ?? (object)DBNull.Value),
+                        new SqlParameter("@Status", model.Status ?? (object)DBNull.Value),
                         new SqlParameter("@CreatedBy", model.CreatedBy ?? (object)DBNull.Value),
                         new SqlParameter("@Id", System.Data.SqlDbType.Int) { Direction = System.Data.ParameterDirection.Output }
                     };
 
-                    _context.Database.ExecuteSqlRaw("Usp_InsertTask @Title, @Description, @CreatedBy, @Id OUT", @params);
+                    _context.Database.ExecuteSqlRaw("Usp_InsertTask @Title, @Description, @Status, @CreatedBy, @Id OUT", @params);
                     _context.SaveChanges();
-                    var obj = @params[3].Value.ToString();
+                    var obj = @params[4].Value.ToString();
                     result = !string.IsNullOrEmpty(obj) ? Convert.ToInt32(obj) : 0;
                 }
             }
@@ -128,12 +127,13 @@ namespace Workshop.APIs.Repositories.Implement
                         new SqlParameter("@Id", model.Id),
                         new SqlParameter("@Title", model.Title ?? (object)DBNull.Value),
                         new SqlParameter("@Description", model.Description ?? (object)DBNull.Value),
+                        new SqlParameter("@Status", model.Status ?? (object)DBNull.Value),
                         new SqlParameter("@IsActive", model.IsActive),
                         new SqlParameter("@IsDeleted", model.IsDeleted),
                         new SqlParameter("@ModifiedBy", model.ModifiedBy ?? (object)DBNull.Value)
                     };
 
-                    int obj = _context.Database.ExecuteSqlRaw("Usp_UpdateTask @Id, @Title, @Description, @IsActive, @IsDeleted, @ModifiedBy", @params);
+                    int obj = _context.Database.ExecuteSqlRaw("Usp_UpdateTask @Id, @Title, @Description, @Status, @IsActive, @IsDeleted, @ModifiedBy", @params);
                     _context.SaveChanges();
                     result = obj > 0;
                 }
