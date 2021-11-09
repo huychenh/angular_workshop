@@ -1,5 +1,87 @@
-<h1>User</h1>
-
-<p aria-live="polite">Current count: <strong>{{ currentCount }}</strong></p>
-
-<button class="btn btn-primary" (click)="incrementCounter()">Increment</button>
+<div class="container">
+    <div class="add-button">
+        <button type="button" class="btn btn-primary" (click)="add()">Add</button>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="card user-card">
+                <div class="card-header top-userinfo">
+                    <h4 class="userinfo-title">Le Cao</h4>
+                </div>
+                <div class="card-block">
+                    <div class="user-image">
+                        <img src="https://bootdey.com/img/Content/avatar/avatar7.png" class="img-radius" alt="User-Profile-Image">
+                    </div>
+                    <div class="role-userinfo">
+                        <h5>Developer</h5>
+                    </div>
+                    <button type="button" class="btn btn-primary button-userinfo" (click)="add()">Schedule</button>                                        
+                </div>
+                <div class="bottom-userinfo">
+                    <button type="button" class="btn btn-light button-userinfo">Edit</button>&nbsp;
+                    <button type="button" class="btn btn-danger button-userinfo">Remove</button>                        
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card user-card">
+                <div class="card-header top-userinfo">
+                    <h4 class="userinfo-title">Son Dang</h4>
+                </div>
+                <div class="card-block">
+                    <div class="user-image">
+                        <img src="https://bootdey.com/img/Content/avatar/avatar6.png" class="img-radius" alt="User-Profile-Image">
+                    </div>
+                    <div class="role-userinfo">
+                        <h5>PM</h5>
+                    </div>
+                    <button type="button" class="btn btn-primary button-userinfo" (click)="add()">Schedule</button>                                        
+                </div>
+                <div class="bottom-userinfo">
+                    <button type="button" class="btn btn-light button-userinfo">Edit</button>&nbsp;
+                    <button type="button" class="btn btn-danger button-userinfo">Remove</button>                        
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card user-card">
+                <div class="card-header top-userinfo">
+                    <h4 class="userinfo-title">Le Nguyen</h4>
+                </div>
+                <div class="card-block">
+                    <div class="user-image">
+                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="img-radius" alt="User-Profile-Image">
+                    </div>
+                    <div class="role-userinfo">
+                        <h5>Developer</h5>
+                    </div>
+                    <button type="button" class="btn btn-primary button-userinfo" (click)="add()">Schedule</button>                    
+                </div>
+                <div class="bottom-userinfo">
+                    <button type="button" class="btn btn-light button-userinfo">Edit</button>&nbsp;
+                    <button type="button" class="btn btn-danger button-userinfo">Remove</button>                        
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card user-card">
+                <div class="card-header top-userinfo">
+                    <h4 class="userinfo-title">Nhu Nguyen</h4>
+                </div>
+                <div class="card-block">
+                    <div class="user-image">
+                        <img src="https://bootdey.com/img/Content/avatar/avatar6.png" class="img-radius" alt="User-Profile-Image">
+                    </div>
+                    <div class="role-userinfo">
+                        <h5>QC</h5>
+                    </div>
+                    <button type="button" class="btn btn-primary button-userinfo" (click)="add()">Schedule</button>                    
+                </div>
+                <div class="bottom-userinfo">
+                    <button type="button" class="btn btn-light button-userinfo">Edit</button>&nbsp;
+                    <button type="button" class="btn btn-danger button-userinfo">Remove</button>                        
+                </div>
+            </div>
+        </div>
+	</div>
+</div>
