@@ -10,8 +10,8 @@ using Workshop.Authentication.Models;
 namespace Workshop.Authentication.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20211027170525_UpdateCode20211028.001")]
-    partial class UpdateCode20211028001
+    [Migration("20211109132927_Construction")]
+    partial class Construction
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -51,14 +51,14 @@ namespace Workshop.Authentication.Migrations
                         new
                         {
                             Id = "asdfghjklmnbvcxzqwertyuio01",
-                            ConcurrencyStamp = "8676d3fc-cce8-4e98-9d09-11433612059f",
+                            ConcurrencyStamp = "015853f0-0507-4543-9e5d-79f2c4e343a2",
                             Name = "SuperUser",
                             NormalizedName = "SuperUser"
                         },
                         new
                         {
                             Id = "asdfghjklmnbvcxzqwertyuio02",
-                            ConcurrencyStamp = "d61b04c1-02d3-4b12-9dcc-cc63df091e61",
+                            ConcurrencyStamp = "427ffd53-1d80-4fac-9f76-39097a70b818",
                             Name = "User",
                             NormalizedName = "User"
                         });
@@ -251,6 +251,57 @@ namespace Workshop.Authentication.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("Workshop.Common.Models.ScheduleModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("TimeEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("TimeStart")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Schedules");
+                });
+
             modelBuilder.Entity("Workshop.Common.Models.TaskModel", b =>
                 {
                     b.Property<int>("Id")
@@ -288,6 +339,42 @@ namespace Workshop.Authentication.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tasks");
+                });
+
+            modelBuilder.Entity("Workshop.Common.Models.UserModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Fullname")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("JobRole")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WsUsers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -1,6 +1,6 @@
 ﻿namespace Workshop.Common.Models
 {
-    public class CompanyUserModel : BaseModel
+    public class UserModel : BaseModel
     {
         public string Fullname { get; set; }
 

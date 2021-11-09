@@ -3,16 +3,16 @@ using Workshop.Common.Models;
 
 namespace Workshop.Common.Responses
 {
-    public class ConmpanyUserResponse : BaseResponse
+    public class UserResponse : BaseResponse
     {
         /// <summary>
         /// List
         /// </summary>
-        public IEnumerable<CompanyUserModel> Users { get; set; }
+        public IEnumerable<UserModel> Users { get; set; }
 
         /// <summary>
         /// Object
         /// </summary>
-        public CompanyUserModel User { get; set; }
+        public UserModel User { get; set; }
     }
 }

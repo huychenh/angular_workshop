@@ -10,10 +10,12 @@ namespace Workshop.Common.Models
 
         public string Description { get; set; }
 
+        public string Location { get; set; }
+
         public DateTime TimeStart { get; set; }
 
         public DateTime TimeEnd { get; set; }
 
-        public int CompanyUserId { get; set; }
+        public int UserId { get; set; }
     }
 }

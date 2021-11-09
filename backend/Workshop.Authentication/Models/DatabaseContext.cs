@@ -35,7 +35,7 @@ namespace Workshop.Authentication.Models
 
         public virtual DbSet<TaskModel> Tasks { get; set; }
 
-        public virtual DbSet<CompanyUserModel> CompanyUsers { get; set; }
+        public virtual DbSet<UserModel> WsUsers { get; set; }
 
         public virtual DbSet<ScheduleModel> Schedules { get; set; }
 
