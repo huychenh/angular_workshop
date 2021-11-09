@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Workshop.Authentication.Models;
 
 namespace Workshop.Authentication.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20211109041829_AddUser_Schedule")]
+    partial class AddUser_Schedule
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,14 +51,14 @@ namespace Workshop.Authentication.Migrations
                         new
                         {
                             Id = "asdfghjklmnbvcxzqwertyuio01",
-                            ConcurrencyStamp = "2e3b7c4d-97af-481e-af26-66be5be69571",
+                            ConcurrencyStamp = "91578b6d-a414-4385-a2c6-1aeaf4c58b07",
                             Name = "SuperUser",
                             NormalizedName = "SuperUser"
                         },
                         new
                         {
                             Id = "asdfghjklmnbvcxzqwertyuio02",
-                            ConcurrencyStamp = "2767373f-05f2-423e-b3ce-fc0d301c254e",
+                            ConcurrencyStamp = "c5ee1b33-d08f-4c6d-a207-546b3d6fdf84",
                             Name = "User",
                             NormalizedName = "User"
                         });
@@ -291,9 +293,6 @@ namespace Workshop.Authentication.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CompanyUserId")
-                        .HasColumnType("int");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
