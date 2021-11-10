@@ -64,7 +64,7 @@ namespace Workshop.Authentication.Migrations
                     Location = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TimeStart = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TimeEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    WsUserId = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -227,12 +227,12 @@ namespace Workshop.Authentication.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "asdfghjklmnbvcxzqwertyuio01", "015853f0-0507-4543-9e5d-79f2c4e343a2", "SuperUser", "SuperUser" });
+                values: new object[] { "asdfghjklmnbvcxzqwertyuio01", "f0c091db-7b5c-4ae0-8804-22611e35f92b", "SuperUser", "SuperUser" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "asdfghjklmnbvcxzqwertyuio02", "427ffd53-1d80-4fac-9f76-39097a70b818", "User", "User" });
+                values: new object[] { "asdfghjklmnbvcxzqwertyuio02", "5312e505-0b57-4c37-a896-7117260a0aef", "User", "User" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

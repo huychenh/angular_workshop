@@ -46,7 +46,7 @@ namespace Workshop.APIs
 
             //Inject for repositories
             services.AddScoped<ITaskRepository, TaskRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IWsUserRepository, WsUserRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

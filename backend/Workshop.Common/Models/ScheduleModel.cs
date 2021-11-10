@@ -16,6 +16,6 @@ namespace Workshop.Common.Models
 
         public DateTime TimeEnd { get; set; }
 
-        public int UserId { get; set; }
+        public int WsUserId { get; set; }
     }
 }

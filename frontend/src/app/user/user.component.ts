@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { GlobalComponent } from "../global.component";
-import { ICompanyUserDto } from "../interfaces/iUserDto";
+import { IWsUserDto } from "../interfaces/iWsUserDto";
 import { INotificationDto } from "../interfaces/iNotificationDto";
-import { ICompanyUserResponse } from "../interfaces/iUserResponse";
+import { IWsUserResponse } from "../interfaces/iWsUserResponse";
 
 @Component({
   selector: 'app-user-component',
@@ -16,7 +16,7 @@ export class UserComponent {
   
   //Declare variables.
   private httpProtocol: HttpClient;    
-  public companyUsers: ICompanyUserDto[] = [];
+  public wsUsers: IWsUserDto[] = [];
 
   public notification: INotificationDto = {
       id: 0,
@@ -40,7 +40,9 @@ export class UserComponent {
 
   constructor(http: HttpClient) {
     this.httpProtocol = http;
+  }
 
+  ngOnInit() {
     //Get the list.
     this.getAll();
   }
@@ -50,18 +52,26 @@ export class UserComponent {
     */
   public getAll(): void {
     this.isLoading = true;
-    this.httpProtocol.get<ICompanyUserResponse>(`${this.apiBaseUrl}user/list`).subscribe(result => {        
-    this.companyUsers = result.companyUsers;
+    this.httpProtocol.get<IWsUserResponse>(`${this.apiBaseUrl}WsUser/list`).subscribe(result => {        
+    this.wsUsers = result.wsUsers;
     this.isLoading = false;
     }, errorResponse => {
-    //handle errors
-    if (errorResponse.status >= 400) {
-        var arrays = errorResponse.error.errors;
-        this.errors = this.setErrors(arrays);
-    }
+      //handle errors
+      if (errorResponse.status >= 400) {
+          var arrays = errorResponse.error.errors;
+          this.errors = this.setErrors(arrays);
+      }
 
-    this.isLoading = false;
+      this.isLoading = false;
     });
+  }
+
+
+  public isEvenIndex(index: number): boolean {
+    if(index % 2 == 0) {
+      return true;
+    }
+    return false;
   }
 
   /**

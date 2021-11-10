@@ -52,7 +52,9 @@ export class TaskDoneListComponent {
 
     constructor(http: HttpClient) {
         this.httpProtocol = http;
-    
+    }
+
+    ngOnInit() {
         //Get the list.
         this.getAll(this.taskStatus);
     }

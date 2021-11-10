@@ -8,16 +8,16 @@ using Workshop.Common.Models;
 
 namespace Workshop.APIs.Repositories.Implement
 {
-    public class UserRepository : IUserRepository
+    public class WsUserRepository : IWsUserRepository
     {
         private readonly DatabaseContext _context;
 
-        public UserRepository(DatabaseContext context)
+        public WsUserRepository(DatabaseContext context)
         {
             _context = context;
         }
 
-        public bool Delete(UserModel model)
+        public bool Delete(WsUserModel model)
         {
             bool result = false;
             try
@@ -41,7 +41,7 @@ namespace Workshop.APIs.Repositories.Implement
             return result;
         }
 
-        public IEnumerable<UserModel> GetAll()
+        public IEnumerable<WsUserModel> GetAll()
         {
             try
             {
@@ -53,7 +53,7 @@ namespace Workshop.APIs.Repositories.Implement
             }
         }
         
-        public UserModel GetById(int id)
+        public WsUserModel GetById(int id)
         {
             try
             {
@@ -65,7 +65,7 @@ namespace Workshop.APIs.Repositories.Implement
             }
         }
 
-        public int Insert(UserModel model)
+        public int Insert(WsUserModel model)
         {
             int result;
             try
@@ -98,7 +98,7 @@ namespace Workshop.APIs.Repositories.Implement
             return result;
         }
 
-        public bool Update(UserModel model)
+        public bool Update(WsUserModel model)
         {
             bool result;
             try

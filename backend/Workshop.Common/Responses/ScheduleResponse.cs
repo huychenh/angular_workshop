@@ -8,11 +8,11 @@ namespace Workshop.Common.Responses
         /// <summary>
         /// List
         /// </summary>
-        public IEnumerable<ScheduleModel> Users { get; set; }
+        public IEnumerable<ScheduleModel> Schedules { get; set; }
 
         /// <summary>
         /// Object
         /// </summary>
-        public ScheduleModel User { get; set; }
+        public ScheduleModel Schedule { get; set; }
     }
 }

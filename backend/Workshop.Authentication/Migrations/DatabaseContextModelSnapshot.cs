@@ -49,14 +49,14 @@ namespace Workshop.Authentication.Migrations
                         new
                         {
                             Id = "asdfghjklmnbvcxzqwertyuio01",
-                            ConcurrencyStamp = "015853f0-0507-4543-9e5d-79f2c4e343a2",
+                            ConcurrencyStamp = "f0c091db-7b5c-4ae0-8804-22611e35f92b",
                             Name = "SuperUser",
                             NormalizedName = "SuperUser"
                         },
                         new
                         {
                             Id = "asdfghjklmnbvcxzqwertyuio02",
-                            ConcurrencyStamp = "427ffd53-1d80-4fac-9f76-39097a70b818",
+                            ConcurrencyStamp = "5312e505-0b57-4c37-a896-7117260a0aef",
                             Name = "User",
                             NormalizedName = "User"
                         });
@@ -292,7 +292,7 @@ namespace Workshop.Authentication.Migrations
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("WsUserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -339,7 +339,7 @@ namespace Workshop.Authentication.Migrations
                     b.ToTable("Tasks");
                 });
 
-            modelBuilder.Entity("Workshop.Common.Models.UserModel", b =>
+            modelBuilder.Entity("Workshop.Common.Models.WsUserModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

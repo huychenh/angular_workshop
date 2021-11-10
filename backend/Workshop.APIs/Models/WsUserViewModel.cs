@@ -1,6 +1,6 @@
 ﻿namespace Workshop.APIs.Models
 {
-    public class UserViewModel
+    public class WsUserViewModel
     {
         /// <summary>
         /// ViewModel for CreateUser

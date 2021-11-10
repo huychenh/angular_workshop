@@ -46,10 +46,12 @@ export class TaskProgressListComponent {
 
     constructor(http: HttpClient) {
         this.httpProtocol = http;
-    
+    }
+
+    ngOnInit() {
         //Get the list.
         this.getAll(this.taskStatus);
-    }
+    } 
 
     /**
      * Get the task list by status = 'Progress'.

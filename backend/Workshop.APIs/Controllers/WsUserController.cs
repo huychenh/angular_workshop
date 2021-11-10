@@ -13,24 +13,24 @@ using Workshop.Common.Responses.Objects;
 namespace Workshop.APIs.Controllers
 {
     [Route("api/[controller]")]
-    public class UserController : ControllerBase
+    public class WsUserController : ControllerBase
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IWsUserRepository _userRepository;
 
-        public UserController(IUserRepository userRepository)
+        public WsUserController(IWsUserRepository userRepository)
         {
             _userRepository = userRepository;
         }
 
         [HttpGet]
         [Route("list")]
-        public UserResponse Get()
+        public WsUserResponse Get()
         {
-            var response = new UserResponse();
+            var response = new WsUserResponse();
 
             try
             {
-                response.Users = _userRepository.GetAll();
+                response.WsUsers = _userRepository.GetAll();
             }
             catch (Exception ex)
             {
@@ -46,13 +46,13 @@ namespace Workshop.APIs.Controllers
 
         [HttpGet]
         [Route("details/{id}")]
-        public UserResponse Get(int id)
+        public WsUserResponse Get(int id)
         {
-            var response = new UserResponse();
+            var response = new WsUserResponse();
 
             try
             {
-                response.User = _userRepository.GetById(id);
+                response.WsUser = _userRepository.GetById(id);
             }
             catch (Exception ex)
             {
@@ -68,16 +68,16 @@ namespace Workshop.APIs.Controllers
 
         [HttpPut]
         [Route("delete")]
-        public UserResponse Delete(UserViewModel.Delete model)
+        public WsUserResponse Delete(WsUserViewModel.Delete model)
         {
-            var response = new UserResponse();
+            var response = new WsUserResponse();
             var list = new ListDictionary();
 
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var obj = new UserModel
+                    var obj = new WsUserModel
                     {
                         Id = model.Id,
                         ModifiedBy = model.ModifiedBy
@@ -136,9 +136,9 @@ namespace Workshop.APIs.Controllers
 
         [HttpPost]
         [Route("create")]
-        public UserResponse Create(UserViewModel.Create model)
+        public WsUserResponse Create(WsUserViewModel.Create model)
         {
-            var response = new UserResponse();
+            var response = new WsUserResponse();
             var list = new ListDictionary();
 
             try
@@ -151,7 +151,7 @@ namespace Workshop.APIs.Controllers
 
                 if (ModelState.IsValid)
                 {
-                    var obj = new UserModel
+                    var obj = new WsUserModel
                     {
                         Fullname = model.Fullname,
                         JobRole = model.JobRole
@@ -168,7 +168,7 @@ namespace Workshop.APIs.Controllers
                             InfoMessage = "Insert sucessfully - Id: " + id + "."
                         };
 
-                        response.User = new UserModel()
+                        response.WsUser = new WsUserModel()
                         {
                             Id = id
                         };
@@ -209,9 +209,9 @@ namespace Workshop.APIs.Controllers
 
         [HttpPut]
         [Route("edit")]
-        public UserResponse Edit(UserViewModel.Edit model)
+        public WsUserResponse Edit(WsUserViewModel.Edit model)
         {
-            var response = new UserResponse();
+            var response = new WsUserResponse();
             var list = new ListDictionary();
 
             try

@@ -45,7 +45,9 @@ export class TaskNewListComponent {
     
     constructor(http: HttpClient) {
         this.httpProtocol = http;
-    
+    }
+
+    ngOnInit(): void {
         //Get the list.
         this.getAll(this.taskStatus);
     }
