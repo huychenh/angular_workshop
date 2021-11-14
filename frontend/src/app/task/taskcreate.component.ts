@@ -103,9 +103,7 @@ export class TaskCreateComponent {
         model.title = taskDto.title;
         model.description = taskDto.description;
         model.status = taskDto.status !== '' ? taskDto.status : "New";
-        model.createdBy = "System";
-        model.modifiedBy = "System";
-
+        
         this.httpProtocol.post<ITaskResponse>(`${this.apiBaseUrl}task/create`, model, this.httpOptions).subscribe(result => {
           
           this.notification = result.notification;    

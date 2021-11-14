@@ -19,6 +19,8 @@ import { UserComponent } from './user/user.component';
 import { ScheduleComponent } from './schedule/schedule.component';
 import { LoginComponent } from './login/login.component';
 
+import { UserInfoComponent } from './user/userInfo.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -31,7 +33,8 @@ import { LoginComponent } from './login/login.component';
     TaskProgressListComponent,
     UserComponent,
     ScheduleComponent,
-    LoginComponent
+    LoginComponent,
+    UserInfoComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),    

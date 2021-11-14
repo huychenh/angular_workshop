@@ -13,7 +13,7 @@ using Workshop.Common.Responses.Objects;
 namespace Workshop.APIs.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController]    
     public class TaskController : ControllerBase
     {
         private readonly ITaskRepository _taskRepository;

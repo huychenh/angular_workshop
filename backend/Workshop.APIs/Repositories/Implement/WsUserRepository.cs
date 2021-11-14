@@ -79,13 +79,13 @@ namespace Workshop.APIs.Repositories.Implement
 
                     SqlParameter[] @params =
                     {
-                        new SqlParameter("@Fullname", model.Fullname ?? (object)DBNull.Value),
+                        new SqlParameter("@FullName", model.FullName ?? (object)DBNull.Value),
                         new SqlParameter("@JobRole", model.JobRole ?? (object)DBNull.Value),                        
                         new SqlParameter("@CreatedBy", model.CreatedBy ?? (object)DBNull.Value),
                         new SqlParameter("@Id", System.Data.SqlDbType.Int) { Direction = System.Data.ParameterDirection.Output }
                     };
 
-                    _context.Database.ExecuteSqlRaw("Usp_InsertUser @Fullname, @JobRole, @CreatedBy, @Id OUT", @params);
+                    _context.Database.ExecuteSqlRaw("Usp_InsertUser @FullName, @JobRole, @CreatedBy, @Id OUT", @params);
                     _context.SaveChanges();
                     var obj = @params[3].Value.ToString();
                     result = !string.IsNullOrEmpty(obj) ? Convert.ToInt32(obj) : 0;
@@ -112,14 +112,14 @@ namespace Workshop.APIs.Repositories.Implement
                     SqlParameter[] @params =
                     {
                         new SqlParameter("@Id", model.Id),
-                        new SqlParameter("@Fullname", model.Fullname ?? (object)DBNull.Value),
+                        new SqlParameter("@FullName", model.FullName ?? (object)DBNull.Value),
                         new SqlParameter("@JobRole", model.JobRole ?? (object)DBNull.Value),                        
                         new SqlParameter("@IsActive", model.IsActive),
                         new SqlParameter("@IsDeleted", model.IsDeleted),
                         new SqlParameter("@ModifiedBy", model.ModifiedBy ?? (object)DBNull.Value)
                     };
 
-                    int obj = _context.Database.ExecuteSqlRaw("Usp_UpdateTask @Id, @Fullname, @JobRole, @IsActive, @IsDeleted, @ModifiedBy", @params);
+                    int obj = _context.Database.ExecuteSqlRaw("Usp_UpdateTask @Id, @FullName, @JobRole, @IsActive, @IsDeleted, @ModifiedBy", @params);
                     _context.SaveChanges();
                     result = obj > 0;
                 }

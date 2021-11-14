@@ -4,15 +4,19 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using Workshop.APIs.Models;
 using Workshop.APIs.Repositories;
 using Workshop.Common.Models;
 using Workshop.Common.Responses;
 using Workshop.Common.Responses.Objects;
 
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+
 namespace Workshop.APIs.Controllers
 {
     [Route("api/[controller]")]
+    [ApiController]
     public class WsUserController : ControllerBase
     {
         private readonly IWsUserRepository _userRepository;
@@ -144,7 +148,7 @@ namespace Workshop.APIs.Controllers
             try
             {
                 //Validate model
-                if (string.IsNullOrEmpty(model.Fullname))
+                if (string.IsNullOrEmpty(model.FullName))
                 {
                     ModelState.AddModelError("Fullname", "Fullname required");
                 }
@@ -153,7 +157,7 @@ namespace Workshop.APIs.Controllers
                 {
                     var obj = new WsUserModel
                     {
-                        Fullname = model.Fullname,
+                        FullName = model.FullName,
                         JobRole = model.JobRole
                     };
 
@@ -222,9 +226,9 @@ namespace Workshop.APIs.Controllers
                     ModelState.AddModelError("NotFound", "User not found");
                 }
 
-                if (string.IsNullOrEmpty(model.Fullname))
+                if (string.IsNullOrEmpty(model.FullName))
                 {
-                    ModelState.AddModelError("Fullname", "Fullname required");
+                    ModelState.AddModelError("FullName", "FullName required");
                 }
 
                 if (ModelState.IsValid)
@@ -233,9 +237,9 @@ namespace Workshop.APIs.Controllers
                     var obj = _userRepository.GetById(model.Id);
                     if (obj != null)
                     {
-                        obj.Fullname = model.Fullname;
+                        obj.FullName = model.FullName;
                         obj.JobRole = model.JobRole;
-                        
+
                         obj.ModifiedBy = User.Identity.IsAuthenticated ? User.Identity.Name : "System";
 
                         bool result = _userRepository.Update(obj);

@@ -2,90 +2,54 @@
     <div class="add-button">
         <button type="button" class="btn btn-primary" (click)="add()">Add</button>
     </div>
-    <div class="row">
-        <div class="col" *ngFor="let item of wsUsers; index as index">
-            <div class="card user-card">
-                <div class="card-header top-userinfo">
-                    <h4 class="userinfo-title">{{item.fullname}}</h4>
-                </div>
-                <div class="card-block">
-                    <div class="user-image">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar7.png" *ngIf="isEvenIndex(index)" 
+    <div class="alert alert-success alert-dismissible" role="alert" *ngIf="infoMessage">
+        {{infoMessage}}
+        <button type="button" class="close" aria-label="Close" (click)="closeNotify(false)">
+          <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="row" *ngFor="let rowItem of groupUsers">        
+        <div class="col" *ngFor="let item of rowItem; index as index">     
+            <form *ngIf="wsUserDto">
+                <div class="card user-card">
+                    <div class="card-header top-userinfo">
+                        <h4 class="userinfo-title">{{item.fullName}}</h4>
+                        <input type="text" class="form-control" [(ngModel)]="wsUserDto.fullName" name="fullName" placeholder="FullName..." *ngIf="actionMode == 'mode_add' && item.id == -1" />                        
+                        <div class="alert alert-danger alert-dismissible" role="alert" *ngIf="enableErrorNotification && actionMode == 'mode_add' && item.id == -1">
+                            {{errors[0]}}
+                            <!-- <ul>
+                                <li *ngFor="let err of errors">
+                                  {{err}}
+                                </li>
+                            </ul> -->
+                            <button type="button" class="close" aria-label="Close" (click)="closeNotify(true)">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-block">
+                        <div class="user-image">
+                            <img src="https://bootdey.com/img/Content/avatar/avatar7.png" *ngIf="isEvenIndex(index)" 
+                                class="img-radius" alt="User-Profile-Image" />
+    
+                            <img src="https://bootdey.com/img/Content/avatar/avatar6.png" *ngIf="!isEvenIndex(index)" 
                             class="img-radius" alt="User-Profile-Image" />
-
-                        <img src="https://bootdey.com/img/Content/avatar/avatar6.png" *ngIf="!isEvenIndex(index)" 
-                        class="img-radius" alt="User-Profile-Image" />
+                        </div>
+                        <div class="role-userinfo">
+                            <h5>{{item.jobRole}}</h5>
+                            <input type="text" class="form-control" [(ngModel)]="wsUserDto.jobRole"  name="jobRole" placeholder="Role..."  *ngIf="actionMode == 'mode_add' && item.id == -1" />
+                        </div>
+                        <button type="button" class="btn btn-primary button-userinfo" (click)="add()">Schedule</button>                                        
                     </div>
-                    <div class="role-userinfo">
-                        <h5>{{item.jobRole}}</h5>
+                    <div class="bottom-userinfo">
+                        <button type="button" (click)="edit(item.id)" class="btn btn-light button-userinfo" *ngIf="actionMode == 'mode_list' || item.id != -1">Edit</button>&nbsp;
+                        <button type="button" (click)="cancel()" class="btn btn-light button-userinfo" *ngIf="actionMode == 'mode_add' && item.id == -1">Cancel</button>&nbsp;
+                        <button type="submit" (click)="save(wsUserDto)" class="btn btn-light button-userinfo" *ngIf="actionMode == 'mode_add' && item.id == -1">Update</button>&nbsp;
+                        <button type="submit" class="btn btn-danger button-userinfo">Remove</button>                    
                     </div>
-                    <button type="button" class="btn btn-primary button-userinfo" (click)="add()">Schedule</button>                                        
                 </div>
-                <div class="bottom-userinfo">
-                    <button type="button" class="btn btn-light button-userinfo">Edit</button>&nbsp;
-                    <button type="button" class="btn btn-danger button-userinfo">Remove</button>                        
-                </div>
-            </div>
+            </form>           
+            
         </div>
-        <!-- <div class="col">
-            <div class="card user-card">
-                <div class="card-header top-userinfo">
-                    <h4 class="userinfo-title">Son Dang</h4>
-                </div>
-                <div class="card-block">
-                    <div class="user-image">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar6.png" class="img-radius" alt="User-Profile-Image">
-                    </div>
-                    <div class="role-userinfo">
-                        <h5>PM</h5>
-                    </div>
-                    <button type="button" class="btn btn-primary button-userinfo" (click)="add()">Schedule</button>                                        
-                </div>
-                <div class="bottom-userinfo">
-                    <button type="button" class="btn btn-light button-userinfo">Edit</button>&nbsp;
-                    <button type="button" class="btn btn-danger button-userinfo">Remove</button>                        
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="card user-card">
-                <div class="card-header top-userinfo">
-                    <h4 class="userinfo-title">Le Nguyen</h4>
-                </div>
-                <div class="card-block">
-                    <div class="user-image">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="img-radius" alt="User-Profile-Image">
-                    </div>
-                    <div class="role-userinfo">
-                        <h5>Developer</h5>
-                    </div>
-                    <button type="button" class="btn btn-primary button-userinfo" (click)="add()">Schedule</button>                    
-                </div>
-                <div class="bottom-userinfo">
-                    <button type="button" class="btn btn-light button-userinfo">Edit</button>&nbsp;
-                    <button type="button" class="btn btn-danger button-userinfo">Remove</button>                        
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="card user-card">
-                <div class="card-header top-userinfo">
-                    <h4 class="userinfo-title">Nhu Nguyen</h4>
-                </div>
-                <div class="card-block">
-                    <div class="user-image">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar6.png" class="img-radius" alt="User-Profile-Image">
-                    </div>
-                    <div class="role-userinfo">
-                        <h5>QC</h5>
-                    </div>
-                    <button type="button" class="btn btn-primary button-userinfo" (click)="add()">Schedule</button>                    
-                </div>
-                <div class="bottom-userinfo">
-                    <button type="button" class="btn btn-light button-userinfo">Edit</button>&nbsp;
-                    <button type="button" class="btn btn-danger button-userinfo">Remove</button>                        
-                </div>
-            </div>
-        </div> -->
 	</div>
 </div>

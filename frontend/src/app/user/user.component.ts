@@ -5,6 +5,7 @@ import { GlobalComponent } from "../global.component";
 import { IWsUserDto } from "../interfaces/iWsUserDto";
 import { INotificationDto } from "../interfaces/iNotificationDto";
 import { IWsUserResponse } from "../interfaces/iWsUserResponse";
+import { IWsUserCreate } from '../interfaces/iWsUserCreate';
 
 @Component({
   selector: 'app-user-component',
@@ -17,6 +18,7 @@ export class UserComponent {
   //Declare variables.
   private httpProtocol: HttpClient;    
   public wsUsers: IWsUserDto[] = [];
+  public groupUsers: IWsUserDto[][] = [];
 
   public notification: INotificationDto = {
       id: 0,
@@ -31,6 +33,10 @@ export class UserComponent {
   public isLoading: boolean = false;
   public apiBaseUrl: string = GlobalComponent.apiBaseUrl;
 
+  public actionMode: string = "mode_list";
+  public wsUserDto: IWsUserDto = this.wsUserObject();  
+  public enableErrorNotification: boolean = false;
+  
   //Default headers for http.
   private httpOptions = {
       headers: new HttpHeaders({
@@ -51,11 +57,16 @@ export class UserComponent {
     * Get the user list
     */
   public getAll(): void {
-    this.isLoading = true;
-    this.httpProtocol.get<IWsUserResponse>(`${this.apiBaseUrl}WsUser/list`).subscribe(result => {        
-    this.wsUsers = result.wsUsers;
-    this.isLoading = false;
-    }, errorResponse => {
+      this.actionMode = "mode_list";
+      this.isLoading = true;
+      this.httpProtocol.get<IWsUserResponse>(`${this.apiBaseUrl}WsUser/list`).subscribe(result => {        
+      this.wsUsers = this.sortData(result.wsUsers);
+      
+      //Process to display list  
+      this.groupUsers = this.groupArray(this.wsUsers, 4);
+
+      this.isLoading = false;
+      }, errorResponse => {
       //handle errors
       if (errorResponse.status >= 400) {
           var arrays = errorResponse.error.errors;
@@ -64,6 +75,19 @@ export class UserComponent {
 
       this.isLoading = false;
     });
+  }
+  
+  public groupArray<T>(data: Array<T>, n: number): Array<T[]> {
+    let group = new Array<T[]>();
+​
+    for (let i = 0, j = 0; i < data.length; i++) {
+        if (i >= n && i % n === 0)
+            j++;
+        group[j] = group[j] || [];
+        group[j].push(data[i])
+    }
+​
+    return group;
   }
 
 
@@ -93,6 +117,168 @@ export class UserComponent {
     return result;
   }
 
+  //Add
   public add(): void {  
+    
+    this.actionMode = "mode_add";
+    this.wsUserDto = this.wsUserObject();
+
+    //Find an item ID = -1
+    var objTemp = this.wsUsers.find(k => k.id == -1);
+    if(objTemp != null) {
+      this.wsUsers[0] = this.wsUserDto; //Replace
+    } else {
+      this.wsUsers.push(this.wsUserDto);
+      this.wsUsers = this.sortData(this.wsUsers);
+    }
+
+    //Process to display list  
+    this.groupUsers = this.groupArray(this.wsUsers, 4);
+
+    //Close all notifications
+    this.closeNotify(false);
+    this.closeNotify(true);
   }
+
+  /**
+     * Save user
+     * @param userDto : IWsUserDto
+     */
+   public save(wsUserDto: IWsUserDto, action: string = "insert"): void {
+
+    if(action == "insert") {
+      var model = this.wsUserCreateObject();
+      model.fullName = wsUserDto.fullName;
+      model.jobRole = wsUserDto.jobRole;
+      
+      this.httpProtocol.post<IWsUserResponse>(`${this.apiBaseUrl}wsUser/create`, model, this.httpOptions).subscribe(result => {
+        
+        this.notification = result.notification;    
+        if (this.notification.notificationCode == 200) {
+  
+          //Sucess
+          this.infoMessage = this.notification.infoMessage;
+          this.errors = [];
+          this.enableErrorNotification = false;
+  
+          //Re-constructor
+          this.wsUserDto = this.wsUserObject();
+  
+          //Reload list
+          this.getAll();
+        } else {
+  
+          //Error
+          var arrays = this.notification.detailErrorMessage;
+          this.errors = this.setErrors(arrays);
+          this.enableErrorNotification = true;
+          this.infoMessage = "";
+        }
+      }, errorResponse => {
+        //handle errors
+        if (errorResponse.status >= 400) {
+          var arrays = errorResponse.error.errors;
+          this.errors = this.setErrors(arrays);
+          this.enableErrorNotification = true;
+          this.infoMessage = "";
+        }
+      });
+    } else {
+      //Case update
+
+    }
+
+
+    
+  };
+
+
+  //Cancel
+  public cancel(): void {  
+    
+    this.actionMode = "mode_list";
+    this.wsUsers.splice(0, 1);
+    this.wsUsers = this.sortData(this.wsUsers);
+
+    //Process to display list  
+    this.groupUsers = this.groupArray(this.wsUsers, 4);
+  }
+
+  /**
+    * Close error notification
+    */
+  public closeNotify(isErrorNotify: boolean = false): void {
+    if(isErrorNotify) {
+        this.enableErrorNotification = false;
+    } else {
+        this.infoMessage = "";
+  }
+  }
+
+  //Edit
+  public edit(id: number): void {  
+    
+    this.actionMode = "mode_edit";
+    // this.wsUserDto = this.wsUserObject();
+
+    // //Find an item ID = -1
+    // var objTemp = this.wsUsers.find(k => k.id == -1);
+    // if(objTemp != null) {
+    //   this.wsUsers[0] = this.wsUserDto; //Replace
+    // } else {
+    //   this.wsUsers.push(this.wsUserDto);
+    //   this.wsUsers = this.sortData(this.wsUsers);
+    // }
+
+    // //Process to display list  
+    // this.groupUsers = this.groupArray(this.wsUsers, 4);
+
+    // //Close all notifications
+    // this.closeNotify(false);
+    // this.closeNotify(true);
+  }
+
+
+  /**
+     * Re-constructor the user object.
+     */
+   private wsUserObject(): IWsUserDto {
+
+    var obj: IWsUserDto = {
+        id: -1,
+        fullName: "",
+        jobRole: "",        
+        createdDate: new Date().toString(),
+        createdBy: "",
+        modifiedDate: new Date().toString(),
+        modifiedBy: "",
+        isActive: false,
+        isDeleted: false      
+    };
+
+    return obj;
+  };
+
+  /**
+   * Sort array data descending by modifiedDate
+   * @param array IWsUserDto[]
+   * @returns IWsUserDto[]
+   */
+  private sortData(array: IWsUserDto[]): IWsUserDto[] {    
+    return array.sort((a, b) => {
+      return <any>new Date(b.modifiedDate) - <any>new Date(a.modifiedDate);
+    });
+  }
+
+  /**
+    * Re-constructor the user.
+    */
+   private wsUserCreateObject(): any {
+    var obj: IWsUserCreate = {
+        fullName: "",        
+        jobRole: ""
+    };
+    return obj;
+  };
+
 }

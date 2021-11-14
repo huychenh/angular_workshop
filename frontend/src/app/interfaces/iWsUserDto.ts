@@ -1,9 +1,9 @@
 /**
- * Interface for CompanyUser
+ * Interface for WsUser
  */
  export interface IWsUserDto {
     id: number;    
-    fullname: string;
+    fullName: string;
     jobRole: string; 
     
     createdDate: string;
