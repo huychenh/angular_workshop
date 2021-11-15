@@ -6,6 +6,8 @@ import { IWsUserDto } from "../interfaces/iWsUserDto";
 import { INotificationDto } from "../interfaces/iNotificationDto";
 import { IWsUserResponse } from "../interfaces/iWsUserResponse";
 import { IWsUserCreate } from '../interfaces/iWsUserCreate';
+import { IWsUserDelete } from '../interfaces/iWsUserDelete';
+
 
 @Component({
   selector: 'app-user-component',
@@ -36,6 +38,7 @@ export class UserComponent {
   public actionMode: string = "mode_list";
   public wsUserDto: IWsUserDto = this.wsUserObject();  
   public enableErrorNotification: boolean = false;
+  public editId: number = 0;
   
   //Default headers for http.
   private httpOptions = {
@@ -144,9 +147,9 @@ export class UserComponent {
      * Save user
      * @param userDto : IWsUserDto
      */
-   public save(wsUserDto: IWsUserDto, action: string = "insert"): void {
+   public save(wsUserDto: IWsUserDto): void {
 
-    if(action == "insert") {
+    if(this.actionMode == "mode_add") {
       var model = this.wsUserCreateObject();
       model.fullName = wsUserDto.fullName;
       model.jobRole = wsUserDto.jobRole;
@@ -186,6 +189,40 @@ export class UserComponent {
     } else {
       //Case update
 
+        wsUserDto.createdDate = "";
+        wsUserDto.modifiedDate = "";
+        
+        this.httpProtocol.put<IWsUserResponse>(`${this.apiBaseUrl}wsUser/edit`, wsUserDto, this.httpOptions).subscribe(result => {
+          //var res = result;
+          this.notification = result.notification;
+    
+          if (this.notification.notificationCode == 200) {
+    
+            //Sucess
+            this.infoMessage = this.notification.infoMessage;
+            this.errors = [];
+            this.enableErrorNotification = false;    
+
+            //Reload list
+            this.getAll();
+          } else {
+    
+            //Error
+            var arrays = this.notification.detailErrorMessage;
+            this.errors = this.setErrors(arrays);
+            this.enableErrorNotification = true;
+            this.infoMessage = "";
+          }
+        }, errorResponse => {
+          //handle errors
+          if (errorResponse.status >= 400) {
+            var arrays = errorResponse.error.errors;
+            this.errors = this.setErrors(arrays);
+            this.enableErrorNotification = true;
+            this.infoMessage = "";
+          }
+        });
+
     }
 
 
@@ -215,28 +252,86 @@ export class UserComponent {
   }
   }
 
-  //Edit
-  public edit(id: number): void {  
-    
+  /**
+     * Get the user details by id.
+     */
+   public details(id: number): void {
     this.actionMode = "mode_edit";
-    // this.wsUserDto = this.wsUserObject();
+    this.editId = id;
 
-    // //Find an item ID = -1
-    // var objTemp = this.wsUsers.find(k => k.id == -1);
-    // if(objTemp != null) {
-    //   this.wsUsers[0] = this.wsUserDto; //Replace
-    // } else {
-    //   this.wsUsers.push(this.wsUserDto);
-    //   this.wsUsers = this.sortData(this.wsUsers);
-    // }
+    this.httpProtocol.get<IWsUserResponse>(`${this.apiBaseUrl}wsUser/details/${id}`).subscribe(result => {
+    this.wsUserDto = result.wsUser;
 
-    // //Process to display list  
-    // this.groupUsers = this.groupArray(this.wsUsers, 4);
+    }, errorResponse => {
+        //handle errors
+        if (errorResponse.status >= 400) {
+            var arrays = errorResponse.error.errors;
+            this.errors = this.setErrors(arrays);
+        }        
+    });
+}
 
-    // //Close all notifications
-    // this.closeNotify(false);
-    // this.closeNotify(true);
-  }
+  /**
+     * Delete User
+     * @param wsUserDto : IWsUserDto
+     */
+   public delete(wsUserDto: IWsUserDto): void {
+
+    if(!confirm(`Are you sure you want to remove ${wsUserDto.fullName}?`)) {
+        return;
+    }
+
+    var model = this.wsUserDeleteObject();
+    model.id = wsUserDto.id;
+    model.modifiedBy = "System";
+
+    this.httpProtocol.put<IWsUserResponse>(`${this.apiBaseUrl}wsUser/delete`, model, this.httpOptions).subscribe(result => {
+      //var res = result;
+      this.notification = result.notification;
+
+      if (this.notification.notificationCode == 200) {
+
+        //Sucess
+        this.infoMessage = this.notification.infoMessage;            
+        this.errors = [];
+        this.enableErrorNotification = false;    
+
+        //Re-constructor
+        this.wsUserDto = this.wsUserObject();
+  
+        //Reload list
+        this.getAll();
+
+      } else {
+
+        //Error
+        var arrays = this.notification.detailErrorMessage;
+        this.errors = this.setErrors(arrays);
+        this.enableErrorNotification = true;
+        this.infoMessage = "";
+      }
+    }, errorResponse => {
+      //handle errors
+      if (errorResponse.status >= 400) {
+        var arrays = errorResponse.error.errors;
+        this.errors = this.setErrors(arrays);
+        this.enableErrorNotification = true;
+        this.infoMessage = "";
+      }
+    });
+  };
+
+  /**
+   * wsUserDeleteObject
+   * @returns IWsUserDelete
+   */
+   private wsUserDeleteObject(): IWsUserDelete {
+    var obj: IWsUserDelete = {
+        id: -1,            
+        modifiedBy: ""            
+    };
+    return obj;
+  };
 
 
   /**

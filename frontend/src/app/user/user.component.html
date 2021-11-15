@@ -14,14 +14,9 @@
                 <div class="card user-card">
                     <div class="card-header top-userinfo">
                         <h4 class="userinfo-title">{{item.fullName}}</h4>
-                        <input type="text" class="form-control" [(ngModel)]="wsUserDto.fullName" name="fullName" placeholder="FullName..." *ngIf="actionMode == 'mode_add' && item.id == -1" />                        
-                        <div class="alert alert-danger alert-dismissible" role="alert" *ngIf="enableErrorNotification && actionMode == 'mode_add' && item.id == -1">
-                            {{errors[0]}}
-                            <!-- <ul>
-                                <li *ngFor="let err of errors">
-                                  {{err}}
-                                </li>
-                            </ul> -->
+                        <input type="text" class="form-control" [(ngModel)]="wsUserDto.fullName" name="fullName" placeholder="FullName..." *ngIf="(actionMode == 'mode_add' && item.id == -1) || (actionMode == 'mode_edit' && item.id == editId)" />
+                        <div class="alert alert-danger alert-dismissible" role="alert" *ngIf="enableErrorNotification && ((actionMode == 'mode_add' && item.id == -1) || (actionMode == 'mode_edit' && item.id == editId))">
+                            {{errors[0]}}                            
                             <button type="button" class="close" aria-label="Close" (click)="closeNotify(true)">
                               <span aria-hidden="true">&times;</span>
                             </button>
@@ -37,15 +32,15 @@
                         </div>
                         <div class="role-userinfo">
                             <h5>{{item.jobRole}}</h5>
-                            <input type="text" class="form-control" [(ngModel)]="wsUserDto.jobRole"  name="jobRole" placeholder="Role..."  *ngIf="actionMode == 'mode_add' && item.id == -1" />
+                            <input type="text" class="form-control" [(ngModel)]="wsUserDto.jobRole"  name="jobRole" placeholder="Role..."  *ngIf="(actionMode == 'mode_add' && item.id == -1) || (actionMode == 'mode_edit' && item.id == editId)" />
                         </div>
                         <button type="button" class="btn btn-primary button-userinfo" (click)="add()">Schedule</button>                                        
                     </div>
                     <div class="bottom-userinfo">
-                        <button type="button" (click)="edit(item.id)" class="btn btn-light button-userinfo" *ngIf="actionMode == 'mode_list' || item.id != -1">Edit</button>&nbsp;
-                        <button type="button" (click)="cancel()" class="btn btn-light button-userinfo" *ngIf="actionMode == 'mode_add' && item.id == -1">Cancel</button>&nbsp;
-                        <button type="submit" (click)="save(wsUserDto)" class="btn btn-light button-userinfo" *ngIf="actionMode == 'mode_add' && item.id == -1">Update</button>&nbsp;
-                        <button type="submit" class="btn btn-danger button-userinfo">Remove</button>                    
+                        <button type="button" (click)="details(item.id)" class="btn btn-light button-userinfo" *ngIf="(actionMode == 'mode_list' && item.id != -1) || item.id != editId">Edit</button>&nbsp;
+                        <button type="button" (click)="cancel()" class="btn btn-light button-userinfo" *ngIf="(actionMode == 'mode_add' && item.id == -1) || (actionMode == 'mode_edit' && item.id == editId)">Cancel</button>&nbsp;
+                        <button type="submit" (click)="save(wsUserDto)" class="btn btn-light button-userinfo" *ngIf="(actionMode == 'mode_add' && item.id == -1) || (actionMode == 'mode_edit' && item.id == editId)">Update</button>&nbsp;
+                        <button type="submit" (click)="delete(item)" class="btn btn-danger button-userinfo">Remove</button>                    
                     </div>
                 </div>
             </form>           

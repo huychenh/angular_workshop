@@ -119,7 +119,7 @@ namespace Workshop.APIs.Repositories.Implement
                         new SqlParameter("@ModifiedBy", model.ModifiedBy ?? (object)DBNull.Value)
                     };
 
-                    int obj = _context.Database.ExecuteSqlRaw("Usp_UpdateTask @Id, @FullName, @JobRole, @IsActive, @IsDeleted, @ModifiedBy", @params);
+                    int obj = _context.Database.ExecuteSqlRaw("Usp_UpdateUser @Id, @FullName, @JobRole, @IsActive, @IsDeleted, @ModifiedBy", @params);
                     _context.SaveChanges();
                     result = obj > 0;
                 }
