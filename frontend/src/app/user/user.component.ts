@@ -144,13 +144,54 @@ export class UserComponent {
   }
 
   /**
+     * Update user
+     * @param userDto : IWsUserDto
+     */
+   public update(wsUserDto: IWsUserDto): void {
+
+    wsUserDto.createdDate = "";
+        wsUserDto.modifiedDate = "";
+        
+        this.httpProtocol.put<IWsUserResponse>(`${this.apiBaseUrl}wsUser/edit`, wsUserDto, this.httpOptions).subscribe(result => {
+          //var res = result;
+          this.notification = result.notification;
+    
+          if (this.notification.notificationCode == 200) {
+    
+            //Sucess
+            this.infoMessage = this.notification.infoMessage;
+            this.errors = [];
+            this.enableErrorNotification = false;    
+
+            //Reload list
+            this.getAll();
+          } else {
+    
+            //Error
+            var arrays = this.notification.detailErrorMessage;
+            this.errors = this.setErrors(arrays);
+            this.enableErrorNotification = true;
+            this.infoMessage = "";
+          }
+        }, errorResponse => {
+          //handle errors
+          if (errorResponse.status >= 400) {
+            var arrays = errorResponse.error.errors;
+            this.errors = this.setErrors(arrays);
+            this.enableErrorNotification = true;
+            this.infoMessage = "";
+          }
+        });
+  };
+
+
+  /**
      * Save user
      * @param userDto : IWsUserDto
      */
-   public save(wsUserDto: IWsUserDto): void {
+   public create(wsUserDto: IWsUserDto): void {
 
-    if(this.actionMode == "mode_add") {
-      var model = this.wsUserCreateObject();
+    var model = this.wsUserCreateObject();
       model.fullName = wsUserDto.fullName;
       model.jobRole = wsUserDto.jobRole;
       
@@ -186,47 +227,6 @@ export class UserComponent {
           this.infoMessage = "";
         }
       });
-    } else {
-      //Case update
-
-        wsUserDto.createdDate = "";
-        wsUserDto.modifiedDate = "";
-        
-        this.httpProtocol.put<IWsUserResponse>(`${this.apiBaseUrl}wsUser/edit`, wsUserDto, this.httpOptions).subscribe(result => {
-          //var res = result;
-          this.notification = result.notification;
-    
-          if (this.notification.notificationCode == 200) {
-    
-            //Sucess
-            this.infoMessage = this.notification.infoMessage;
-            this.errors = [];
-            this.enableErrorNotification = false;    
-
-            //Reload list
-            this.getAll();
-          } else {
-    
-            //Error
-            var arrays = this.notification.detailErrorMessage;
-            this.errors = this.setErrors(arrays);
-            this.enableErrorNotification = true;
-            this.infoMessage = "";
-          }
-        }, errorResponse => {
-          //handle errors
-          if (errorResponse.status >= 400) {
-            var arrays = errorResponse.error.errors;
-            this.errors = this.setErrors(arrays);
-            this.enableErrorNotification = true;
-            this.infoMessage = "";
-          }
-        });
-
-    }
-
-
-    
   };
 
 
