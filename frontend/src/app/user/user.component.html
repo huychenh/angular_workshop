@@ -38,11 +38,11 @@
                         <button type="button" class="btn btn-primary button-userinfo" (click)="add()">Schedule</button>                                        
                     </div>
                     <div class="bottom-userinfo">
-                        <button type="button" (click)="details(item.id)" class="btn btn-light button-userinfo" *ngIf="(actionMode == 'mode_list' && item.id != -1) || item.id != editId">Edit</button>&nbsp;
-                        <button type="button" (click)="cancel()" class="btn btn-light button-userinfo" *ngIf="(actionMode == 'mode_add' && item.id == -1) || (actionMode == 'mode_edit' && item.id == editId)">Cancel</button>&nbsp;
-                        <button type="submit" (click)="create(wsUserDto)" class="btn btn-light button-userinfo" *ngIf="actionMode == 'mode_add' && item.id == -1">Update</button>&nbsp;
-                        <button type="submit" (click)="update(wsUserDto)" class="btn btn-light button-userinfo" *ngIf="(actionMode == 'mode_add' && item.id == -1) || (actionMode == 'mode_edit' && item.id == editId)">Update</button>&nbsp;                        
-                        <button type="submit" (click)="delete(item)" class="btn btn-danger button-userinfo">Remove</button>                    
+                        <button type="button" (click)="details(item.id)" class="btn btn-light button-userinfo" *ngIf="(actionMode == 'mode_list' && item.id != -1) || (item.id != editId && item.id != -1)">Edit</button>&nbsp;
+                        <button type="button" (click)="cancel()" class="btn btn-light button-userinfo" *ngIf="actionMode == 'mode_edit' && item.id == editId">Cancel</button>&nbsp;
+                        <button type="submit" (click)="create(wsUserDto)" class="btn btn-light button-userinfo" *ngIf="actionMode == 'mode_add' && item.id == -1">Create</button>&nbsp;
+                        <button type="submit" (click)="update(wsUserDto)" class="btn btn-light button-userinfo" *ngIf="actionMode == 'mode_edit' && item.id == editId">Update</button>&nbsp;                        
+                        <button type="submit" (click)="delete(item)" class="btn btn-danger button-userinfo" *ngIf="item.id != -1">Remove</button>                    
                     </div>
                 </div>
             </form>           

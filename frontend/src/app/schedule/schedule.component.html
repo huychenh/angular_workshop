@@ -1,5 +1,41 @@
-<h1>Schedule</h1>
-
-<p aria-live="polite">Current count: <strong>{{ currentCount }}</strong></p>
-
-<button class="btn btn-primary" (click)="incrementCounter()">Increment</button>
+<table class="table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Creator</th>
+        <th>Description</th>
+        <th>Location</th>
+        <th>Time Start</th>
+        <th>Time End</th>
+        <th>&nbsp;</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Meeting</td>
+        <td>Le Cao</td>
+        <td>Release Overview</td>
+        <td>Toorak</td>
+        <td>Oct 28, 2017 06:20:00 PM</td>
+        <td>Oct 28, 2017 07:20:00 PM</td>
+        <td>
+            <button type="button" class="btn btn-primary button-userinfo">Details</button>&nbsp;
+            <button type="button" class="btn btn-primary button-userinfo">Edit</button>&nbsp;
+            <button type="submit" class="btn btn-danger button-userinfo">Delete</button>&nbsp;
+        </td>
+      </tr>
+      <tr>
+        <td>Meeting</td>
+        <td>Son Dang</td>
+        <td>Standup</td>
+        <td>Manchester</td>
+        <td>Oct 29, 2017 05:10:00 PM</td>
+        <td>Oct 29, 2017 07:10:00 PM</td>
+        <td>
+            <button type="button" class="btn btn-primary button-userinfo">Details</button>&nbsp;
+            <button type="button" class="btn btn-primary button-userinfo">Edit</button>&nbsp;
+            <button type="submit" class="btn btn-danger button-userinfo">Delete</button>&nbsp;
+        </td>
+      </tr>      
+    </tbody>
+  </table>

@@ -6,9 +6,12 @@ import { UserComponent } from './user/user.component';
 import { ScheduleComponent } from './schedule/schedule.component';
 import { LoginComponent } from './login/login.component';
 
+
 const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
-  { path: 'user', component: UserComponent },
+  { 
+    path: 'user', component: UserComponent    
+  },
   { path: 'schedule', component: ScheduleComponent },
   { path: 'login', component: LoginComponent }
 ];

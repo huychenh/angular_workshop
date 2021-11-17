@@ -8,7 +8,6 @@ import { IWsUserResponse } from "../interfaces/iWsUserResponse";
 import { IWsUserCreate } from '../interfaces/iWsUserCreate';
 import { IWsUserDelete } from '../interfaces/iWsUserDelete';
 
-
 @Component({
   selector: 'app-user-component',
   templateUrl: './user.component.html',
@@ -55,6 +54,7 @@ export class UserComponent {
     //Get the list.
     this.getAll();
   }
+
 
   /**
     * Get the user list
