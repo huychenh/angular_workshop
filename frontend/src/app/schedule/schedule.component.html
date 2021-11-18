@@ -11,31 +11,18 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>Meeting</td>
-        <td>Le Cao</td>
-        <td>Release Overview</td>
-        <td>Toorak</td>
-        <td>Oct 28, 2017 06:20:00 PM</td>
-        <td>Oct 28, 2017 07:20:00 PM</td>
+      <tr *ngFor="let item of schedules">
+        <td>{{item.title}}</td>
+        <td>{{item.creator}}</td>
+        <td>{{item.description}}</td>
+        <td>{{item.location}}</td>
+        <td>{{item.timeStart}}</td>
+        <td>{{item.timeEnd}}</td>
         <td>
             <button type="button" class="btn btn-primary button-userinfo">Details</button>&nbsp;
             <button type="button" class="btn btn-primary button-userinfo">Edit</button>&nbsp;
             <button type="submit" class="btn btn-danger button-userinfo">Delete</button>&nbsp;
         </td>
-      </tr>
-      <tr>
-        <td>Meeting</td>
-        <td>Son Dang</td>
-        <td>Standup</td>
-        <td>Manchester</td>
-        <td>Oct 29, 2017 05:10:00 PM</td>
-        <td>Oct 29, 2017 07:10:00 PM</td>
-        <td>
-            <button type="button" class="btn btn-primary button-userinfo">Details</button>&nbsp;
-            <button type="button" class="btn btn-primary button-userinfo">Edit</button>&nbsp;
-            <button type="submit" class="btn btn-danger button-userinfo">Delete</button>&nbsp;
-        </td>
-      </tr>      
+      </tr>           
     </tbody>
   </table>
