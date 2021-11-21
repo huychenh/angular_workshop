@@ -26,6 +26,7 @@ export class ScheduleComponent {
   private httpProtocol: HttpClient;    
   public schedules: IScheduleDto[] = [];
   public datePickerFormat = 'yyyy-MM-dd HH:mm';
+
   public dTimeStart = new Date();
   public dTimeEnd = new Date();
   
@@ -46,7 +47,7 @@ export class ScheduleComponent {
   public sheduleDto: IScheduleDto = this.scheduleObject();  
   public enableErrorNotification: boolean = false;  
   public scheduleDto: IScheduleDto = this.scheduleObject();
-  private defaultFormatDateTime: string = "yyyy-mm-dd HH:MM:ss";
+  
   
   
   //Default headers for http.
@@ -73,7 +74,8 @@ export class ScheduleComponent {
   public getAll(): void {      
       this.isLoading = true;
       this.httpProtocol.get<IScheduleResponse>(`${this.apiBaseUrl}schedule/list`).subscribe(result => {              
-      this.schedules = mappingDateTimeForObject(result.schedules);
+      // this.schedules = mappingDateTimeForObject(result.schedules);
+      this.schedules = result.schedules;
       
       this.isLoading = false;
       }, errorResponse => {
@@ -95,11 +97,11 @@ export class ScheduleComponent {
     this.httpProtocol.get<IScheduleResponse>(`${this.apiBaseUrl}schedule/details/${id}`).subscribe(result => {
     this.scheduleDto = result.schedule;
 
-    this.scheduleDto.createdDate = convertJsonToDateTime(this.scheduleDto.createdDate, this.defaultFormatDateTime);
-    this.scheduleDto.modifiedDate = convertJsonToDateTime(this.scheduleDto.modifiedDate, this.defaultFormatDateTime);
+    // this.scheduleDto.createdDate = convertJsonToDateTime(this.scheduleDto.createdDate, this.defaultFormatDateTime);
+    // this.scheduleDto.modifiedDate = convertJsonToDateTime(this.scheduleDto.modifiedDate, this.defaultFormatDateTime);
 
-    this.scheduleDto.timeStart = convertJsonToDateTime(this.scheduleDto.timeStart, this.datePickerFormat);
-    this.scheduleDto.timeEnd = convertJsonToDateTime(this.scheduleDto.timeEnd, "yyyy-mm-dd HH:MM");
+    // this.scheduleDto.timeStart = convertJsonToDateTime(this.scheduleDto.timeStart, this.datePickerFormat);
+    // this.scheduleDto.timeEnd = convertJsonToDateTime(this.scheduleDto.timeEnd, this.datePickerFormat); //"yyyy-mm-dd HH:MM"
 
     }, errorResponse => {
         //handle errors
@@ -108,6 +110,18 @@ export class ScheduleComponent {
             this.errors = this.setErrors(arrays);
         }        
     });
+  }
+
+  public toStringDatePicker(dateString: string): string {
+    return convertJsonToDateTime(dateString, this.datePickerFormat);
+  }
+
+  public toDatePickerCreateEdit(date: Date) {
+    
+  }
+  
+  public toStringFullDateTime(dateString: string): string {
+    return convertJsonToDateTime(dateString, "yyyy-mm-dd HH:MM:ss")
   }
 
   /**
@@ -144,10 +158,11 @@ export class ScheduleComponent {
 
       //The category object.
       this.scheduleDto = result.schedule;
-      this.scheduleDto.createdDate = convertJsonToDateTime(this.scheduleDto.createdDate, this.defaultFormatDateTime);
-      this.scheduleDto.modifiedDate = convertJsonToDateTime(this.scheduleDto.modifiedDate, this.defaultFormatDateTime);
-      this.dTimeStart = new Date(this.scheduleDto.timeStart);
-      this.dTimeEnd = new Date(this.scheduleDto.timeEnd);
+
+      // this.scheduleDto.createdDate = convertJsonToDateTime(this.scheduleDto.createdDate, this.defaultFormatDateTime);
+      // this.scheduleDto.modifiedDate = convertJsonToDateTime(this.scheduleDto.modifiedDate, this.defaultFormatDateTime);
+      // this.dTimeStart = new Date(this.scheduleDto.timeStart);
+      // this.dTimeEnd = new Date(this.scheduleDto.timeEnd);
 
     }, errorResponse => {
       //handle errors
@@ -239,8 +254,8 @@ export class ScheduleComponent {
 
       //The scheduleDto object.
       this.scheduleDto = result.schedule;
-      this.scheduleDto.createdDate = convertJsonToDateTime(this.scheduleDto.createdDate, this.defaultFormatDateTime);
-      this.scheduleDto.modifiedDate = convertJsonToDateTime(this.scheduleDto.modifiedDate, this.defaultFormatDateTime);
+      // this.scheduleDto.createdDate = convertJsonToDateTime(this.scheduleDto.createdDate, this.defaultFormatDateTime);
+      // this.scheduleDto.modifiedDate = convertJsonToDateTime(this.scheduleDto.modifiedDate, this.defaultFormatDateTime);
 
     }, errorResponse => {
       //handle errors
