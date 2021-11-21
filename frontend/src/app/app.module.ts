@@ -20,6 +20,10 @@ import { ScheduleComponent } from './schedule/schedule.component';
 import { LoginComponent } from './login/login.component';
 
 import { UserInfoComponent } from './user/userInfo.component';
+import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DateFilterPipe } from './date-filter.pipe';
+import { DatePipe } from '@angular/common';
 
 
 @NgModule({
@@ -35,15 +39,19 @@ import { UserInfoComponent } from './user/userInfo.component';
     UserComponent,
     ScheduleComponent,
     LoginComponent,
-    UserInfoComponent
+    UserInfoComponent,
+    DateFilterPipe
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),    
     AppRoutingModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    OwlDateTimeModule, 
+    OwlNativeDateTimeModule,
+    BrowserAnimationsModule
   ],
-  providers: [],
+  providers: [DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

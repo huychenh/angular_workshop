@@ -35,7 +35,7 @@ export class UserComponent {
   public apiBaseUrl: string = GlobalComponent.apiBaseUrl;
 
   public actionMode: string = "mode_list";
-  public wsUserDto: IWsUserDto = this.wsUserObject();  
+  public wsUserDto: IWsUserDto = this.wsUserObject();
   public enableErrorNotification: boolean = false;
   public editId: number = 0;
   

@@ -116,6 +116,7 @@ namespace Workshop.APIs.Repositories.Implement
                 {
                     SqlParameter[] @params =
                     {
+                        new SqlParameter("@Id", model.Id),
                         new SqlParameter("@Title", model.Title),
                         new SqlParameter("@Creator", model.Creator),
                         new SqlParameter("@Description", model.Description),
@@ -128,7 +129,7 @@ namespace Workshop.APIs.Repositories.Implement
                         new SqlParameter("@ModifiedBy", model.ModifiedBy)
                     };
 
-                    int obj = _context.Database.ExecuteSqlRaw("Usp_UpdateUser @Id, @Title, @Creator, @Description, @Location, @TimeStart, @TimeEnd, @WsUserId, @IsActive, @IsDeleted, @ModifiedBy", @params);
+                    int obj = _context.Database.ExecuteSqlRaw("Usp_UpdateSchedule @Id, @Title, @Creator, @Description, @Location, @TimeStart, @TimeEnd, @WsUserId, @IsActive, @IsDeleted, @ModifiedBy", @params);
                     _context.SaveChanges();
                     result = obj > 0;
                 }

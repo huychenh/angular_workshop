@@ -41,6 +41,9 @@
    for (var i = 0; i < arrJSON.length; i++) {
      arrJSON[i].createdDate = convertJsonToDateTime(arrJSON[i].createdDate, defaultFormatDateTime);
      arrJSON[i].modifiedDate = convertJsonToDateTime(arrJSON[i].modifiedDate, defaultFormatDateTime);
+      
+     arrJSON[i].timeStart = convertJsonToDateTime(arrJSON[i].timeStart, defaultFormatDateTime);
+     arrJSON[i].timeEnd = convertJsonToDateTime(arrJSON[i].timeEnd, defaultFormatDateTime);
    }
    return arrJSON;
  };

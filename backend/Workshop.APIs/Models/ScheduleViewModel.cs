@@ -17,9 +17,9 @@ namespace Workshop.APIs.Models
 
             public string Location { get; set; }
 
-            public DateTime TimeStart { get; set; }
+            public string TimeStart { get; set; }
 
-            public DateTime TimeEnd { get; set; }
+            public string TimeEnd { get; set; }
 
             public int WsUserId { get; set; }
         }

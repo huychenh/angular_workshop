@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -171,8 +172,8 @@ namespace Workshop.APIs.Controllers
                         Creator = model.Creator,
                         Description = model.Description,
                         Location = model.Location,
-                        TimeStart = model.TimeStart,
-                        TimeEnd = model.TimeEnd,
+                        TimeStart = Convert.ToDateTime(model.TimeStart),
+                        TimeEnd = Convert.ToDateTime(model.TimeEnd),
                         WsUserId = model.WsUserId
                     };
 
@@ -266,10 +267,9 @@ namespace Workshop.APIs.Controllers
                         obj.Creator = model.Creator;
                         obj.Description = model.Description;
                         obj.Location = model.Location;
-                        obj.TimeStart = model.TimeStart;
-                        obj.TimeEnd = model.TimeEnd;
+                        obj.TimeStart = Convert.ToDateTime(model.TimeStart);
+                        obj.TimeEnd = Convert.ToDateTime(model.TimeEnd);
                         obj.WsUserId = model.WsUserId;
-
                         obj.ModifiedBy = User.Identity.IsAuthenticated ? User.Identity.Name : "System";
 
                         bool result = _scheduleRepository.Update(obj);

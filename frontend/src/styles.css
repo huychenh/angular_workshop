@@ -1,3 +1,4 @@
+@import "~ng-pick-datetime/assets/style/picker.min.css";
 /* You can add global styles to this file, and also import other style files */
 
 /* Provide sufficient contrast against white background */
@@ -66,4 +67,26 @@ footer {
   padding-top: 1px;
   padding-bottom: 1px;
   border: 1px solid;
+}
+
+.cdk-overlay-container {
+  z-index: 10000 !important;
+}
+
+.date-container{
+  position: relative;
+}
+.shadow-input {
+  position: absolute;
+  top: 22px;
+  width: 0px;
+  height: 0px;
+  border: none;
+}
+span.remove-date{
+  position: absolute;
+  right: 16px;
+  top: 0px;
+  font-size: 24px;
+  cursor: pointer;
 }
