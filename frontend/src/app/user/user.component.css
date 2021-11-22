@@ -183,10 +183,6 @@ body{
     z-index: 10;
 }
 
-.add-button {
-    margin-bottom: 20px;
-}
-
 .top-userinfo {
     margin-bottom: 20px;
     background-color: #387cb4 !important; 
@@ -208,9 +204,3 @@ body{
     color: #fff;
     padding-top: 0;
 }
-
-/* .button-userinfo {
-    padding-top: 1px;
-    padding-bottom: 1px;
-    border: 1px solid;
-} */

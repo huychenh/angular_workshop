@@ -23,7 +23,7 @@ namespace Workshop.APIs.Repositories.Implement
             bool result = false;
             try
             {
-                var obj = _context.WsUsers.FirstOrDefault(k => k.IsActive == true && k.IsDeleted == false && k.Id == model.Id);
+                var obj = _context.Schedules.FirstOrDefault(k => k.IsActive == true && k.IsDeleted == false && k.Id == model.Id);
                 if (obj != null)
                 {
                     obj.IsActive = false;

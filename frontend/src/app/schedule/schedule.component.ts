@@ -1,19 +1,11 @@
 import { Component } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-
 import { GlobalComponent } from "../global.component";
 import { INotificationDto } from "../interfaces/iNotificationDto";
-
 import { IScheduleDto } from '../interfaces/iScheduleDto';
 import { IScheduleResponse } from '../interfaces/iScheduleResponse';
-
-
-
-/**
- * Declare js functions.
- */
- declare function mappingDateTimeForObject(arrJSON: IScheduleDto[]): IScheduleDto[];
- declare function convertJsonToDateTime(datetimeValue: string, format: string): string;
+import { IScheduleCreate } from '../interfaces/IScheduleCreate';
+import { IScheduleDelete } from '../interfaces/IScheduleDelete';
 
 @Component({
   selector: 'app-schedule-component',
@@ -27,6 +19,8 @@ export class ScheduleComponent {
   public schedules: IScheduleDto[] = [];
   public datePickerFormat = 'yyyy-MM-dd HH:mm';
 
+  public dCreateTimeStart = new Date();
+  public dCreateTimeEnd = new Date();
   public dTimeStart = new Date();
   public dTimeEnd = new Date();
   
@@ -42,13 +36,8 @@ export class ScheduleComponent {
   public infoMessage: string = "";
   public isLoading: boolean = false;
   public apiBaseUrl: string = GlobalComponent.apiBaseUrl;
-
-  public actionMode: string = "mode_list";
-  public sheduleDto: IScheduleDto = this.scheduleObject();  
+  public scheduleDto: IScheduleDto = this.scheduleObject();  
   public enableErrorNotification: boolean = false;  
-  public scheduleDto: IScheduleDto = this.scheduleObject();
-  
-  
   
   //Default headers for http.
   private httpOptions = {
@@ -66,18 +55,18 @@ export class ScheduleComponent {
     this.getAll();
   }
 
-
-
   /**
     * Get the list
     */
   public getAll(): void {      
       this.isLoading = true;
-      this.httpProtocol.get<IScheduleResponse>(`${this.apiBaseUrl}schedule/list`).subscribe(result => {              
-      // this.schedules = mappingDateTimeForObject(result.schedules);
+      this.httpProtocol.get<IScheduleResponse>(`${this.apiBaseUrl}schedule/list`).subscribe(result => {                    
       this.schedules = result.schedules;
       
       this.isLoading = false;
+      this.enableErrorNotification = false;
+      this.infoMessage = "";
+
       }, errorResponse => {
       //handle errors
       if (errorResponse.status >= 400) {
@@ -97,12 +86,6 @@ export class ScheduleComponent {
     this.httpProtocol.get<IScheduleResponse>(`${this.apiBaseUrl}schedule/details/${id}`).subscribe(result => {
     this.scheduleDto = result.schedule;
 
-    // this.scheduleDto.createdDate = convertJsonToDateTime(this.scheduleDto.createdDate, this.defaultFormatDateTime);
-    // this.scheduleDto.modifiedDate = convertJsonToDateTime(this.scheduleDto.modifiedDate, this.defaultFormatDateTime);
-
-    // this.scheduleDto.timeStart = convertJsonToDateTime(this.scheduleDto.timeStart, this.datePickerFormat);
-    // this.scheduleDto.timeEnd = convertJsonToDateTime(this.scheduleDto.timeEnd, this.datePickerFormat); //"yyyy-mm-dd HH:MM"
-
     }, errorResponse => {
         //handle errors
         if (errorResponse.status >= 400) {
@@ -110,19 +93,107 @@ export class ScheduleComponent {
             this.errors = this.setErrors(arrays);
         }        
     });
+  }  
+
+  /**
+  * Close error notification
+  */
+  public closeNotify(isErrorNotify: boolean = false): void {
+    if(isErrorNotify) {
+        this.enableErrorNotification = false;
+    } else {
+        this.infoMessage = "";
+    }
   }
 
-  public toStringDatePicker(dateString: string): string {
-    return convertJsonToDateTime(dateString, this.datePickerFormat);
-  }
+  /**
+   * Add forms
+   */
+   public add() {
 
-  public toDatePickerCreateEdit(date: Date) {
-    
-  }
+    //Default
+    this.errors = [];
+    this.enableErrorNotification = false;
+    this.infoMessage = "";
+    this.isLoading = false;
+
+    //constructor categoryDto
+    this.scheduleDto = this.scheduleObject();
+
+    this.dCreateTimeStart = new Date();
+    this.dCreateTimeEnd = new Date();
+  };
+
+  /**
+     * Save schedule
+     * @param scheduleDto : IScheduleDto
+     */
+   public create(scheduleDto: IScheduleDto): void {   
+
+    var model: IScheduleCreate = {
+      title: scheduleDto.title,
+      creator: scheduleDto.creator,
+      description: scheduleDto.description,
+      location: scheduleDto.location,
+      timeStart: "",
+      timeEnd: "",
+      wsUserId: 1
+    };
+
+      //timeStart
+      var year = 0, month = 0, day = 0, hour = 0, minute = 0;
+      year = this.dCreateTimeStart.getFullYear();
+      month = this.dCreateTimeStart.getMonth() + 1;
+      day = this.dCreateTimeStart.getDate();
+      hour = this.dCreateTimeStart.getHours();
+      minute = this.dCreateTimeStart.getMinutes();    
+      
+      model.timeStart = `${year}-${month}-${day} ${hour}:${minute}`;
+
+      //timeEnd
+      year = this.dCreateTimeEnd.getFullYear();
+      month = this.dCreateTimeEnd.getMonth() + 1;
+      day = this.dCreateTimeEnd.getDate();
+      hour = this.dCreateTimeEnd.getHours();
+      minute = this.dCreateTimeEnd.getMinutes();
+
+      model.timeEnd = `${year}-${month}-${day} ${hour}:${minute}`;
+
+      
+      this.httpProtocol.post<IScheduleResponse>(`${this.apiBaseUrl}schedule/create`, model, this.httpOptions).subscribe(result => {
+        
+        this.notification = result.notification;    
+        if (this.notification.notificationCode == 200) {
   
-  public toStringFullDateTime(dateString: string): string {
-    return convertJsonToDateTime(dateString, "yyyy-mm-dd HH:MM:ss")
-  }
+          //Sucess
+          this.infoMessage = this.notification.infoMessage;
+          this.errors = [];
+          this.enableErrorNotification = false;
+  
+          //Re-constructor
+          this.scheduleDto = this.scheduleObject(); 
+
+          //Reload list
+          this.getAll();
+          
+        } else {
+  
+          //Error
+          var arrays = this.notification.detailErrorMessage;
+          this.errors = this.setErrors(arrays);
+          this.enableErrorNotification = true;
+          this.infoMessage = "";
+        }
+      }, errorResponse => {
+        //handle errors
+        if (errorResponse.status >= 400) {
+          var arrays = errorResponse.error.errors;
+          this.errors = this.setErrors(arrays);
+          this.enableErrorNotification = true;
+          this.infoMessage = "";
+        }
+      });
+  };
 
   /**
    * The active checkbox event changed.
@@ -158,11 +229,8 @@ export class ScheduleComponent {
 
       //The category object.
       this.scheduleDto = result.schedule;
-
-      // this.scheduleDto.createdDate = convertJsonToDateTime(this.scheduleDto.createdDate, this.defaultFormatDateTime);
-      // this.scheduleDto.modifiedDate = convertJsonToDateTime(this.scheduleDto.modifiedDate, this.defaultFormatDateTime);
-      // this.dTimeStart = new Date(this.scheduleDto.timeStart);
-      // this.dTimeEnd = new Date(this.scheduleDto.timeEnd);
+      this.dTimeStart =  new Date(this.scheduleDto.timeStart);
+      this.dTimeEnd =  new Date(this.scheduleDto.timeEnd);
 
     }, errorResponse => {
       //handle errors
@@ -254,8 +322,6 @@ export class ScheduleComponent {
 
       //The scheduleDto object.
       this.scheduleDto = result.schedule;
-      // this.scheduleDto.createdDate = convertJsonToDateTime(this.scheduleDto.createdDate, this.defaultFormatDateTime);
-      // this.scheduleDto.modifiedDate = convertJsonToDateTime(this.scheduleDto.modifiedDate, this.defaultFormatDateTime);
 
     }, errorResponse => {
       //handle errors
@@ -271,39 +337,45 @@ export class ScheduleComponent {
    * Delete
    */
   public delete(scheduleDto: IScheduleDto) {
-    scheduleDto.createdDate = "";
-    scheduleDto.modifiedDate = "";
+        
+    var model : IScheduleDelete = {
+      id: scheduleDto.id,
+      modifiedBy: "System"
+    };
 
-    this.httpProtocol.post<IScheduleResponse>(this.apiBaseUrl + 'schedule/delete/' + scheduleDto.id, this.httpOptions).subscribe(result => {
-      var res = result;
-      this.notification = res.notification;
+    this.httpProtocol.put<IScheduleResponse>(`${this.apiBaseUrl}schedule/delete`, model, this.httpOptions).subscribe(result => {
+      //var res = result;
+      this.notification = result.notification;
 
       if (this.notification.notificationCode == 200) {
 
         //Sucess
-        this.infoMessage = this.notification.infoMessage;
+        this.infoMessage = this.notification.infoMessage;            
         this.errors = [];
+        this.enableErrorNotification = false;    
 
+        //Re-constructor
+        this.scheduleDto = this.scheduleObject();
+
+        //Reload list
         this.getAll();
-        var buttonDeleteClose = document.getElementById("ButtonDeleteClose");
-        if (buttonDeleteClose != null) {
-          buttonDeleteClose.click();
-        }
+
       } else {
 
         //Error
         var arrays = this.notification.detailErrorMessage;
         this.errors = this.setErrors(arrays);
+        this.enableErrorNotification = true;
+        this.infoMessage = "";
       }
-
     }, errorResponse => {
       //handle errors
       if (errorResponse.status >= 400) {
         var arrays = errorResponse.error.errors;
         this.errors = this.setErrors(arrays);
+        this.enableErrorNotification = true;
+        this.infoMessage = "";
       }
-
-      this.isLoading = false;
     });
   };
 
@@ -326,7 +398,6 @@ export class ScheduleComponent {
     return result;
   }
 
-
   /**
      * Re-constructor the object.
      */
@@ -340,11 +411,10 @@ export class ScheduleComponent {
         location: "",
         timeStart: "",
         timeEnd: "",
-        wsUserId: -1,
-        
-        createdDate: new Date().toString(),
+        wsUserId: -1,        
+        createdDate: "",
         createdBy: "",
-        modifiedDate: new Date().toString(),
+        modifiedDate: "",
         modifiedBy: "",
         isActive: false,
         isDeleted: false      
@@ -352,6 +422,5 @@ export class ScheduleComponent {
 
     return obj;
   };
-
 
 }

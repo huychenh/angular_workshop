@@ -1,267 +1,383 @@
-<!-- List -->
-<table class="table">
-  <thead>
-    <tr>
-      <th>Title</th>
-      <th>Creator</th>
-      <th>Description</th>
-      <th>Location</th>
-      <th>Time Start</th>
-      <th>Time End</th>
-      <th>&nbsp;</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let item of schedules">
-      <td>{{item.title}}</td>
-      <td>{{item.creator}}</td>
-      <td>{{item.description}}</td>
-      <td>{{item.location}}</td>
-      <td>{{item.timeStart | date:'yyyy-MM-dd HH:mm:ss'}}</td>
-      <td>{{item.timeEnd | date:'yyyy-MM-dd HH:mm:ss'}}</td>
-      <td>
-        <a href="#" title="Details" class="btn btn-primary button-userinfo" (click)="details(item.id)" data-toggle="modal" 
-        data-target="#detail-schedule">
-          Details
-        </a>
-        <a href="#" title="Edit" class="btn btn-primary button-userinfo" (click)="editConfirm(item.id)" data-toggle="modal" 
-        data-target="#edit-schedule">
-          Edit
-        </a>
-        <a href="#" title="Delete" class="btn btn-danger button-userinfo" (click)="deleteConfirm(item.id)" data-toggle="modal" 
-        data-target="#delete-schedule">
-          Delete
-        </a>
-      </td>
-    </tr>           
-  </tbody>
-</table>
+<div class="container">
 
-<!-- Details -->
-<div class="modal fade" id="detail-schedule" role="dialog">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content" *ngIf="scheduleDto">
-      <div class="modal-header">
-        <h4 class="modal-title">Schedule details</h4>
-      </div>
-      <div class="modal-body">
-        <dl class="row">
-          <dt class="col-sm-2"><span style="float:right">Id:</span></dt>
-          <dd class="col-sm-10">{{ scheduleDto.id }}</dd>
-
-          <dt class="col-sm-2"><span style="float:right">Title:</span></dt>
-          <dd class="col-sm-10">{{ scheduleDto.title }}</dd>
-
-          <dt class="col-sm-2"><span style="float:right">Creator:</span></dt>
-          <dd class="col-sm-10">{{ scheduleDto.creator }}</dd>
-
-          <dt class="col-sm-2"><span style="float:right">Description:</span></dt>
-          <dd class="col-sm-10">{{ scheduleDto.description }}</dd>
-
-          <dt class="col-sm-2"><span style="float:right">Location:</span></dt>
-          <dd class="col-sm-10">{{ scheduleDto.location }}</dd>
-
-          <dt class="col-sm-2"><span style="float:right">Time Start:</span></dt>
-          <dd class="col-sm-10">{{scheduleDto.timeStart | date:'yyyy-MM-dd HH:mm:ss'}}</dd>
-
-          <dt class="col-sm-2"><span style="float:right">Time End:</span></dt>
-          <dd class="col-sm-10">{{ scheduleDto.timeEnd | date:'yyyy-MM-dd HH:mm:ss'}}</dd>
-
-          <dt class="col-sm-2"><span style="float:right">CreatedDate:</span></dt>
-          <dd class="col-sm-10">{{ scheduleDto.createdDate | date:'yyyy-MM-dd HH:mm:ss'}}</dd>
-
-          <dt class="col-sm-2"><span style="float:right">CreatedBy:</span></dt>
-          <dd class="col-sm-10">{{ scheduleDto.createdBy }}</dd>
-
-          <dt class="col-sm-2"><span style="float:right">ModifiedDate:</span></dt>
-          <dd class="col-sm-10">{{ scheduleDto.modifiedDate | date:'yyyy-MM-dd HH:mm:ss'}}</dd>
-
-          <dt class="col-sm-2"><span style="float:right">ModifiedBy:</span></dt>
-          <dd class="col-sm-10">{{ scheduleDto.modifiedBy }}</dd>
-
-          <dt class="col-sm-2"><span style="float:right">IsActive:</span></dt>
-          <dd class="col-sm-10">
-            <input type="checkbox" [checked]="scheduleDto.isActive" disabled />
-          </dd>
-
-          <dt class="col-sm-2"><span style="float:right">IsDeleted:</span></dt>
-          <dd class="col-sm-10">
-            <input type="checkbox" [checked]="scheduleDto.isDeleted" disabled />
-          </dd>
-        </dl>
-      </div>
-      <div class="modal-footer">
-        <a href="#" title="Edit" class="btn btn-primary" data-toggle="modal" data-target="#edit-schedule">
-          Edit
-        </a>
-        <button type="button" class="btn btn-default" id="ButtonDetailClose" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-
+  <!--Notification-->
+  <div class="add-button">
+    <!-- <button type="button" class="btn btn-primary" (click)="add()" *ngIf="actionMode == 'mode_list'">Add</button> -->
+    <a href="#" title="Details" data-toggle="modal" class="btn btn-primary" data-target="#create-schedule" (click)="add()">
+      Add
+    </a>
   </div>
-</div>
 
-<!-- Edit -->
-<div class="modal fade" id="edit-schedule" role="dialog">
+  <div class="alert alert-success alert-dismissible" role="alert" *ngIf="infoMessage">
+    {{infoMessage}}
+    <button type="button" class="close" aria-label="Close" (click)="closeNotify(false)">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
 
-  <div class="modal-dialog modal-lg">
-    <form name="FormEditSchedule" id="FormEditSchedule" novalidate *ngIf="scheduleDto">
-      <div class="modal-content">
+  <div class="alert alert-danger" role="alert" *ngIf="errors && enableErrorNotification">
+    <ul>
+      <li *ngFor="let err of errors">
+        {{ err }}
+      </li>
+    </ul>
+  </div>
+
+  <!-- List -->
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Creator</th>
+        <th>Description</th>
+        <th>Location</th>
+        <th>Time Start</th>
+        <th>Time End</th>
+        <th>&nbsp;</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of schedules">
+        <td>{{item.title}}</td>
+        <td>{{item.creator}}</td>
+        <td>{{item.description}}</td>
+        <td>{{item.location}}</td>
+        <td>{{item.timeStart | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+        <td>{{item.timeEnd | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+        <td>
+          <a href="#" title="Details" class="btn btn-primary button-userinfo" (click)="details(item.id)" data-toggle="modal" 
+          data-target="#detail-schedule">
+            Details
+          </a>
+          <a href="#" title="Edit" class="btn btn-primary button-userinfo" (click)="editConfirm(item.id)" data-toggle="modal" 
+          data-target="#edit-schedule">
+            Edit
+          </a>
+          <a href="#" title="Delete" class="btn btn-danger button-userinfo" (click)="deleteConfirm(item.id)" data-toggle="modal" 
+          data-target="#delete-schedule">
+            Delete
+          </a>
+        </td>
+      </tr>           
+    </tbody>
+  </table>
+  
+  <!-- Details -->
+  <div class="modal fade" id="detail-schedule" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content" *ngIf="scheduleDto">
         <div class="modal-header">
-          <h4 class="modal-title">Edit schedules</h4>
+          <h4 class="modal-title">Schedule details</h4>
         </div>
         <div class="modal-body">
-          <div class="alert alert-danger" role="alert" *ngIf="errors && errors.length > 0">
-            <ul>
-              <li *ngFor="let err of errors">
-                {{ err }}
-              </li>
-            </ul>
-          </div>
           <dl class="row">
             <dt class="col-sm-2"><span style="float:right">Id:</span></dt>
             <dd class="col-sm-10">{{ scheduleDto.id }}</dd>
-
+  
             <dt class="col-sm-2"><span style="float:right">Title:</span></dt>
-            <dd class="col-sm-10">
-              <input type="text" [(ngModel)]="scheduleDto.title" class="form-control" name="title" placeholder="Title" ng-maxlength="255" />
-            </dd>
-
+            <dd class="col-sm-10">{{ scheduleDto.title }}</dd>
+  
             <dt class="col-sm-2"><span style="float:right">Creator:</span></dt>
-            <dd class="col-sm-10">
-              <input type="text" [(ngModel)]="scheduleDto.creator" class="form-control" name="creator" placeholder="Creator" ng-maxlength="255" />
-            </dd>
-
+            <dd class="col-sm-10">{{ scheduleDto.creator }}</dd>
+  
             <dt class="col-sm-2"><span style="float:right">Description:</span></dt>
-            <dd class="col-sm-10">
-              <input type="text" [(ngModel)]="scheduleDto.description" class="form-control" name="description" placeholder="Description" ng-maxlength="255" />
-            </dd>
-
+            <dd class="col-sm-10">{{ scheduleDto.description }}</dd>
+  
+            <dt class="col-sm-2"><span style="float:right">Location:</span></dt>
+            <dd class="col-sm-10">{{ scheduleDto.location }}</dd>
+  
             <dt class="col-sm-2"><span style="float:right">Time Start:</span></dt>
-            <dd class="col-sm-10">
-              <input type="text" 
-                    name="timeStart_shadow" 
-                    class="shadow-input"
-                    [(ngModel)]="dTimeStart"
-                    [owlDateTime]="timeStart" />
-
-              <input type="text" 
-                    name="timeStart" 
-                    [owlDateTimeTrigger]="timeStart" 
-                    [value]="dTimeStart | dateFilter:datePickerFormat" />
-              
-              <owl-date-time #timeStart></owl-date-time>
-
+            <dd class="col-sm-10">{{scheduleDto.timeStart | date:'yyyy-MM-dd HH:mm:ss'}}</dd>
+  
             <dt class="col-sm-2"><span style="float:right">Time End:</span></dt>
-            <dd class="col-sm-10">
-              
-              <input type="text" 
-              name="timeEnd_shadow" 
-              class="shadow-input"
-              [(ngModel)]="dTimeEnd"
-              [owlDateTime]="timeEnd" />
-
-              <input type="text" 
-                    name="timeEnd" 
-                    [owlDateTimeTrigger]="timeEnd" 
-                    [value]="dTimeEnd | dateFilter:datePickerFormat" />
-              
-              <owl-date-time #timeEnd></owl-date-time>
-            </dd>
-
+            <dd class="col-sm-10">{{ scheduleDto.timeEnd | date:'yyyy-MM-dd HH:mm:ss'}}</dd>
+  
             <dt class="col-sm-2"><span style="float:right">CreatedDate:</span></dt>
             <dd class="col-sm-10">{{ scheduleDto.createdDate | date:'yyyy-MM-dd HH:mm:ss'}}</dd>
-
+  
             <dt class="col-sm-2"><span style="float:right">CreatedBy:</span></dt>
             <dd class="col-sm-10">{{ scheduleDto.createdBy }}</dd>
-
+  
             <dt class="col-sm-2"><span style="float:right">ModifiedDate:</span></dt>
             <dd class="col-sm-10">{{ scheduleDto.modifiedDate | date:'yyyy-MM-dd HH:mm:ss'}}</dd>
-
+  
             <dt class="col-sm-2"><span style="float:right">ModifiedBy:</span></dt>
             <dd class="col-sm-10">{{ scheduleDto.modifiedBy }}</dd>
-
+  
             <dt class="col-sm-2"><span style="float:right">IsActive:</span></dt>
             <dd class="col-sm-10">
-              <input type="checkbox" #isActiveCheckBox id="isActiveCheckBox" [checked]="scheduleDto.isActive" (change)="activeChanged(isActiveCheckBox.checked)" />
+              <input type="checkbox" [checked]="scheduleDto.isActive" disabled />
             </dd>
-
+  
             <dt class="col-sm-2"><span style="float:right">IsDeleted:</span></dt>
             <dd class="col-sm-10">
-              <input type="checkbox" #isDeletedCheckBox id="isDeletedCheckBox" [checked]="scheduleDto.isDeleted" (change)="deletedChanged(isDeletedCheckBox.checked)" />
+              <input type="checkbox" [checked]="scheduleDto.isDeleted" disabled />
             </dd>
-
           </dl>
-
         </div>
         <div class="modal-footer">
-          <input type="submit" class="btn btn-primary" value="Update" title="Edit schedules" (click)="edit(scheduleDto)" />
-          <button id="ButtonEditClose" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <a href="#" title="Edit" class="btn btn-primary" data-toggle="modal" data-target="#edit-schedule">
+            Edit
+          </a>
+          <button type="button" class="btn btn-default" id="ButtonDetailClose" data-dismiss="modal">Close</button>
         </div>
       </div>
-    </form>
-
-
+  
+    </div>
   </div>
-</div>
-
-<!-- Delete -->
-<div class="modal fade" id="delete-schedule" role="dialog">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content" *ngIf="scheduleDto">
-      <div class="modal-header">
-        <h4 class="modal-title">Delete schedules. Are you sure you want to delete this schedule?</h4>
-      </div>
-      <div class="modal-body">
-        <dl class="row">
-          <dt class="col-sm-2"><span style="float:right">Id:</span></dt>
-          <dd class="col-sm-10">{{ scheduleDto.id }}</dd>
-
-          <dt class="col-sm-2"><span style="float:right">Title:</span></dt>
-          <dd class="col-sm-10">{{ scheduleDto.title }}</dd>
-
-          <dt class="col-sm-2"><span style="float:right">Creator:</span></dt>
-          <dd class="col-sm-10">{{ scheduleDto.creator }}</dd>
-
-          <dt class="col-sm-2"><span style="float:right">Description:</span></dt>
-          <dd class="col-sm-10">{{ scheduleDto.description }}</dd>
-
-          <dt class="col-sm-2"><span style="float:right">Location:</span></dt>
-          <dd class="col-sm-10">{{ scheduleDto.location }}</dd>
-
-          <dt class="col-sm-2"><span style="float:right">Time Start:</span></dt>
-          <dd class="col-sm-10">{{ scheduleDto.timeStart | date:'yyyy-MM-dd HH:mm:ss'}}</dd>
-
-          <dt class="col-sm-2"><span style="float:right">Time End:</span></dt>
-          <dd class="col-sm-10">{{ scheduleDto.timeEnd | date:'yyyy-MM-dd HH:mm:ss'}}</dd>
-
-          <dt class="col-sm-2"><span style="float:right">CreatedDate:</span></dt>
-          <dd class="col-sm-10">{{ scheduleDto.createdDate | date:'yyyy-MM-dd HH:mm:ss'}}</dd>
-
-          <dt class="col-sm-2"><span style="float:right">CreatedBy:</span></dt>
-          <dd class="col-sm-10">{{ scheduleDto.createdBy }}</dd>
-
-          <dt class="col-sm-2"><span style="float:right">ModifiedDate:</span></dt>
-          <dd class="col-sm-10">{{ scheduleDto.modifiedDate | date:'yyyy-MM-dd HH:mm:ss'}}</dd>
-
-          <dt class="col-sm-2"><span style="float:right">ModifiedBy:</span></dt>
-          <dd class="col-sm-10">{{ scheduleDto.modifiedBy }}</dd>
-
-          <dt class="col-sm-2"><span style="float:right">IsActive:</span></dt>
-          <dd class="col-sm-10">
-            <input type="checkbox" [checked]="scheduleDto.isActive" disabled />
-          </dd>
-
-          <dt class="col-sm-2"><span style="float:right">IsDeleted:</span></dt>
-          <dd class="col-sm-10">
-            <input type="checkbox" [checked]="scheduleDto.isDeleted" disabled />
-          </dd>
-        </dl>
-      </div>
-      <div class="modal-footer">
-        <input type="submit" class="btn btn-danger" value="Delete" title="Delete categories" (click)="delete(scheduleDto)" />
-        <button type="button" id="ButtonDeleteClose" class="btn btn-default" data-dismiss="modal">Close</button>
+  
+  <!-- Edit -->
+  <div class="modal fade" id="edit-schedule" role="dialog">
+  
+    <div class="modal-dialog modal-lg">
+      <form name="FormEditSchedule" id="FormEditSchedule" novalidate *ngIf="scheduleDto">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Edit schedules</h4>
+          </div>
+          <div class="modal-body">
+            <div class="alert alert-danger" role="alert" *ngIf="errors && errors.length > 0">
+              <ul>
+                <li *ngFor="let err of errors">
+                  {{ err }}
+                </li>
+              </ul>
+            </div>
+            <dl class="row">
+              <dt class="col-sm-2"><span style="float:right">Id:</span></dt>
+              <dd class="col-sm-10">{{ scheduleDto.id }}</dd>
+  
+              <dt class="col-sm-2"><span style="float:right">Title:</span></dt>
+              <dd class="col-sm-10">
+                <input type="text" [(ngModel)]="scheduleDto.title" class="form-control" name="title" placeholder="Title" ng-maxlength="255" />
+              </dd>
+  
+              <dt class="col-sm-2"><span style="float:right">Creator:</span></dt>
+              <dd class="col-sm-10">
+                <input type="text" [(ngModel)]="scheduleDto.creator" class="form-control" name="creator" placeholder="Creator" ng-maxlength="255" />
+              </dd>
+  
+              <dt class="col-sm-2"><span style="float:right">Description:</span></dt>
+              <dd class="col-sm-10">
+                <input type="text" [(ngModel)]="scheduleDto.description" class="form-control" name="description" placeholder="Description" ng-maxlength="255" />
+              </dd>
+  
+              <dt class="col-sm-2"><span style="float:right">Time Start:</span></dt>
+              <dd class="col-sm-10">
+                <input type="text" 
+                      name="timeStart_shadow" 
+                      class="shadow-input"
+                      [(ngModel)]="dTimeStart"
+                      [owlDateTime]="timeStart" />
+  
+                <input type="text" 
+                      name="timeStart" 
+                      [owlDateTimeTrigger]="timeStart" 
+                      [value]="dTimeStart | dateFilter:datePickerFormat" />
+                
+                <owl-date-time #timeStart></owl-date-time>
+  
+              <dt class="col-sm-2"><span style="float:right">Time End:</span></dt>
+              <dd class="col-sm-10">
+                
+                <input type="text" 
+                name="timeEnd_shadow" 
+                class="shadow-input"
+                [(ngModel)]="dTimeEnd"
+                [owlDateTime]="timeEnd" />
+  
+                <input type="text" 
+                      name="timeEnd" 
+                      [owlDateTimeTrigger]="timeEnd" 
+                      [value]="dTimeEnd | dateFilter:datePickerFormat" />
+                
+                <owl-date-time #timeEnd></owl-date-time>
+              </dd>
+  
+              <dt class="col-sm-2"><span style="float:right">CreatedDate:</span></dt>
+              <dd class="col-sm-10">{{ scheduleDto.createdDate | date:'yyyy-MM-dd HH:mm:ss'}}</dd>
+  
+              <dt class="col-sm-2"><span style="float:right">CreatedBy:</span></dt>
+              <dd class="col-sm-10">{{ scheduleDto.createdBy }}</dd>
+  
+              <dt class="col-sm-2"><span style="float:right">ModifiedDate:</span></dt>
+              <dd class="col-sm-10">{{ scheduleDto.modifiedDate | date:'yyyy-MM-dd HH:mm:ss'}}</dd>
+  
+              <dt class="col-sm-2"><span style="float:right">ModifiedBy:</span></dt>
+              <dd class="col-sm-10">{{ scheduleDto.modifiedBy }}</dd>
+  
+              <dt class="col-sm-2"><span style="float:right">IsActive:</span></dt>
+              <dd class="col-sm-10">
+                <input type="checkbox" #isActiveCheckBox id="isActiveCheckBox" [checked]="scheduleDto.isActive" (change)="activeChanged(isActiveCheckBox.checked)" />
+              </dd>
+  
+              <dt class="col-sm-2"><span style="float:right">IsDeleted:</span></dt>
+              <dd class="col-sm-10">
+                <input type="checkbox" #isDeletedCheckBox id="isDeletedCheckBox" [checked]="scheduleDto.isDeleted" (change)="deletedChanged(isDeletedCheckBox.checked)" />
+              </dd>
+  
+            </dl>
+  
+          </div>
+          <div class="modal-footer">
+            <input type="submit" class="btn btn-primary" value="Update" title="Edit schedules" (click)="edit(scheduleDto)" />
+            <button id="ButtonEditClose" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </form>
+  
+  
+    </div>
+  </div>
+  
+  <!-- Delete -->
+  <div class="modal fade" id="delete-schedule" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content" *ngIf="scheduleDto">
+        <div class="modal-header">
+          <h4 class="modal-title">Delete schedules. Are you sure you want to delete this schedule?</h4>
+        </div>
+        <div class="modal-body">
+          <dl class="row">
+            <dt class="col-sm-2"><span style="float:right">Id:</span></dt>
+            <dd class="col-sm-10">{{ scheduleDto.id }}</dd>
+  
+            <dt class="col-sm-2"><span style="float:right">Title:</span></dt>
+            <dd class="col-sm-10">{{ scheduleDto.title }}</dd>
+  
+            <dt class="col-sm-2"><span style="float:right">Creator:</span></dt>
+            <dd class="col-sm-10">{{ scheduleDto.creator }}</dd>
+  
+            <dt class="col-sm-2"><span style="float:right">Description:</span></dt>
+            <dd class="col-sm-10">{{ scheduleDto.description }}</dd>
+  
+            <dt class="col-sm-2"><span style="float:right">Location:</span></dt>
+            <dd class="col-sm-10">{{ scheduleDto.location }}</dd>
+  
+            <dt class="col-sm-2"><span style="float:right">Time Start:</span></dt>
+            <dd class="col-sm-10">{{ scheduleDto.timeStart | date:'yyyy-MM-dd HH:mm:ss'}}</dd>
+  
+            <dt class="col-sm-2"><span style="float:right">Time End:</span></dt>
+            <dd class="col-sm-10">{{ scheduleDto.timeEnd | date:'yyyy-MM-dd HH:mm:ss'}}</dd>
+  
+            <dt class="col-sm-2"><span style="float:right">CreatedDate:</span></dt>
+            <dd class="col-sm-10">{{ scheduleDto.createdDate | date:'yyyy-MM-dd HH:mm:ss'}}</dd>
+  
+            <dt class="col-sm-2"><span style="float:right">CreatedBy:</span></dt>
+            <dd class="col-sm-10">{{ scheduleDto.createdBy }}</dd>
+  
+            <dt class="col-sm-2"><span style="float:right">ModifiedDate:</span></dt>
+            <dd class="col-sm-10">{{ scheduleDto.modifiedDate | date:'yyyy-MM-dd HH:mm:ss'}}</dd>
+  
+            <dt class="col-sm-2"><span style="float:right">ModifiedBy:</span></dt>
+            <dd class="col-sm-10">{{ scheduleDto.modifiedBy }}</dd>
+  
+            <dt class="col-sm-2"><span style="float:right">IsActive:</span></dt>
+            <dd class="col-sm-10">
+              <input type="checkbox" [checked]="scheduleDto.isActive" disabled />
+            </dd>
+  
+            <dt class="col-sm-2"><span style="float:right">IsDeleted:</span></dt>
+            <dd class="col-sm-10">
+              <input type="checkbox" [checked]="scheduleDto.isDeleted" disabled />
+            </dd>
+          </dl>
+        </div>
+        <div class="modal-footer">
+          <input type="submit" class="btn btn-danger" value="Delete" title="Delete categories" (click)="delete(scheduleDto)" />
+          <button type="button" id="ButtonDeleteClose" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
       </div>
     </div>
   </div>
+
+  <!-- Create -->
+  <div class="modal fade" id="create-schedule" role="dialog">
+
+    <div class="modal-dialog modal-lg">
+      <form name="FormCreateSchedule" id="FormCreateSchedule" novalidate>
+        <div class="modal-content" *ngIf="scheduleDto">
+          <div class="modal-header">
+            <h4 class="modal-title">Create schedules</h4>
+          </div>
+          <div class="modal-body">
+            <div class="alert alert-success alert-dismissible" role="alert" *ngIf="infoMessage">
+              {{infoMessage}}
+              <button type="button" class="close" aria-label="Close" (click)="closeNotify(false)">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            
+            <div class="alert alert-danger" role="alert" *ngIf="errors && enableErrorNotification">
+              <ul>
+                <li *ngFor="let err of errors">
+                  {{ err }}
+                </li>
+              </ul>
+            </div>
+            <dl class="row">
+              <dt class="col-sm-2"><span style="float:right">Title:</span></dt>
+              <dd class="col-sm-10">
+                <input type="text" [(ngModel)]="scheduleDto.title" class="form-control" name="title" placeholder="Title" ng-maxlength="255" />
+              </dd>
+  
+              <dt class="col-sm-2"><span style="float:right">Creator:</span></dt>
+              <dd class="col-sm-10">
+                <input type="text" [(ngModel)]="scheduleDto.creator" class="form-control" name="creator" placeholder="Creator" ng-maxlength="255" />
+              </dd>
+  
+              <dt class="col-sm-2"><span style="float:right">Description:</span></dt>
+              <dd class="col-sm-10">
+                <input type="text" [(ngModel)]="scheduleDto.description" class="form-control" name="description" placeholder="Description" ng-maxlength="255" />
+              </dd>
+  
+              <dt class="col-sm-2"><span style="float:right">Location:</span></dt>
+              <dd class="col-sm-10">
+                <input type="text" [(ngModel)]="scheduleDto.location" class="form-control" name="location" placeholder="Location" ng-maxlength="255" />
+              </dd>
+
+              <dt class="col-sm-2"><span style="float:right">Time Start:</span></dt>
+              <dd class="col-sm-10">
+                <input type="text" 
+                      name="createTimeStart_shadow" 
+                      class="shadow-input"
+                      [(ngModel)]="dCreateTimeStart"
+                      [owlDateTime]="createTimeStart" />
+  
+                <input type="text" 
+                      name="createTimeStart" 
+                      [owlDateTimeTrigger]="createTimeStart" 
+                      [value]="dCreateTimeStart | dateFilter:datePickerFormat" />
+                
+                <owl-date-time #createTimeStart></owl-date-time>
+  
+              <dt class="col-sm-2"><span style="float:right">Time End:</span></dt>
+              <dd class="col-sm-10">
+                
+                <input type="text" 
+                name="createTimeEnd_shadow" 
+                class="shadow-input"
+                [(ngModel)]="dCreateTimeEnd"
+                [owlDateTime]="createTimeEnd" />
+  
+                <input type="text" 
+                      name="createTimeEnd" 
+                      [owlDateTimeTrigger]="createTimeEnd" 
+                      [value]="dCreateTimeEnd | dateFilter:datePickerFormat" />
+                
+                <owl-date-time #createTimeEnd></owl-date-time>
+              </dd>
+            </dl>
+
+          </div>
+          <div class="modal-footer">
+            <input type="submit" class="btn btn-primary" value="Save" title="Create a new schedule" (click)="create(scheduleDto)" />
+            <button id="ButtonCreateClose" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>          
+        </div>
+      </form>
+    </div>
+  </div>
+
 </div>
+

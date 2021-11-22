@@ -249,7 +249,7 @@ export class UserComponent {
         this.enableErrorNotification = false;
     } else {
         this.infoMessage = "";
-  }
+    }
   }
 
   /**
