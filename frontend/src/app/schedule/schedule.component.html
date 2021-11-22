@@ -15,7 +15,7 @@
     </button>
   </div>
 
-  <div class="alert alert-danger" role="alert" *ngIf="errors && enableErrorNotification">
+  <div class="alert alert-danger" role="alert" *ngIf="errors && errors.length > 0">
     <ul>
       <li *ngFor="let err of errors">
         {{ err }}
@@ -115,10 +115,7 @@
             </dd>
           </dl>
         </div>
-        <div class="modal-footer">
-          <a href="#" title="Edit" class="btn btn-primary" data-toggle="modal" data-target="#edit-schedule">
-            Edit
-          </a>
+        <div class="modal-footer">          
           <button type="button" class="btn btn-default" id="ButtonDetailClose" data-dismiss="modal">Close</button>
         </div>
       </div>
@@ -308,10 +305,10 @@
               </button>
             </div>
             
-            <div class="alert alert-danger" role="alert" *ngIf="errors && enableErrorNotification">
+            <div class="alert alert-danger" role="alert" *ngIf="modalErrors && modalErrors.length > 0">
               <ul>
-                <li *ngFor="let err of errors">
-                  {{ err }}
+                <li *ngFor="let modalErr of modalErrors">
+                  {{ modalErr }}
                 </li>
               </ul>
             </div>

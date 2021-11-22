@@ -124,7 +124,7 @@ namespace Workshop.APIs.Repositories.Implement
                         new SqlParameter("@TimeStart", model.TimeStart),
                         new SqlParameter("@TimeEnd", model.TimeEnd),
                         new SqlParameter("@WsUserId", model.WsUserId),
-                        new SqlParameter("@IsActive", model.IsActive),
+                        new SqlParameter("@IsActive", model.IsDeleted == true? false : model.IsActive),
                         new SqlParameter("@IsDeleted", model.IsDeleted),
                         new SqlParameter("@ModifiedBy", model.ModifiedBy)
                     };

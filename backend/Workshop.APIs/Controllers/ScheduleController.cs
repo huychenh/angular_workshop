@@ -271,6 +271,8 @@ namespace Workshop.APIs.Controllers
                         obj.TimeEnd = Convert.ToDateTime(model.TimeEnd);
                         obj.WsUserId = model.WsUserId;
                         obj.ModifiedBy = User.Identity.IsAuthenticated ? User.Identity.Name : "System";
+                        obj.IsActive = model.IsActive;
+                        obj.IsDeleted = model.IsDeleted;
 
                         bool result = _scheduleRepository.Update(obj);
                         if (result)

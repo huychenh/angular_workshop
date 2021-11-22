@@ -34,11 +34,12 @@ export class ScheduleComponent {
   
   public errors: string[] = [];
   public infoMessage: string = "";
+  public modalErrors: string[] = [];
+
   public isLoading: boolean = false;
   public apiBaseUrl: string = GlobalComponent.apiBaseUrl;
   public scheduleDto: IScheduleDto = this.scheduleObject();  
-  public enableErrorNotification: boolean = false;  
-  
+    
   //Default headers for http.
   private httpOptions = {
       headers: new HttpHeaders({
@@ -64,8 +65,8 @@ export class ScheduleComponent {
       this.schedules = result.schedules;
       
       this.isLoading = false;
-      this.enableErrorNotification = false;
-      this.infoMessage = "";
+      // this.enableErrorNotification = false;
+      // this.infoMessage = "";
 
       }, errorResponse => {
       //handle errors
@@ -100,9 +101,10 @@ export class ScheduleComponent {
   */
   public closeNotify(isErrorNotify: boolean = false): void {
     if(isErrorNotify) {
-        this.enableErrorNotification = false;
+        //this.enableErrorNotification = false;
+      this.errors = [];
     } else {
-        this.infoMessage = "";
+      this.infoMessage = "";
     }
   }
 
@@ -113,7 +115,7 @@ export class ScheduleComponent {
 
     //Default
     this.errors = [];
-    this.enableErrorNotification = false;
+    this.modalErrors = [];    
     this.infoMessage = "";
     this.isLoading = false;
 
@@ -140,59 +142,62 @@ export class ScheduleComponent {
       wsUserId: 1
     };
 
-      //timeStart
-      var year = 0, month = 0, day = 0, hour = 0, minute = 0;
-      year = this.dCreateTimeStart.getFullYear();
-      month = this.dCreateTimeStart.getMonth() + 1;
-      day = this.dCreateTimeStart.getDate();
-      hour = this.dCreateTimeStart.getHours();
-      minute = this.dCreateTimeStart.getMinutes();    
+    //timeStart
+    var year = 0, month = 0, day = 0, hour = 0, minute = 0;
+    year = this.dCreateTimeStart.getFullYear();
+    month = this.dCreateTimeStart.getMonth() + 1;
+    day = this.dCreateTimeStart.getDate();
+    hour = this.dCreateTimeStart.getHours();
+    minute = this.dCreateTimeStart.getMinutes();    
+    
+    model.timeStart = `${year}-${month}-${day} ${hour}:${minute}`;
+
+    //timeEnd
+    year = this.dCreateTimeEnd.getFullYear();
+    month = this.dCreateTimeEnd.getMonth() + 1;
+    day = this.dCreateTimeEnd.getDate();
+    hour = this.dCreateTimeEnd.getHours();
+    minute = this.dCreateTimeEnd.getMinutes();
+
+    model.timeEnd = `${year}-${month}-${day} ${hour}:${minute}`;
+
+    
+    this.httpProtocol.post<IScheduleResponse>(`${this.apiBaseUrl}schedule/create`, model, this.httpOptions).subscribe(result => {
       
-      model.timeStart = `${year}-${month}-${day} ${hour}:${minute}`;
+      this.notification = result.notification;    
+      if (this.notification.notificationCode == 200) {
 
-      //timeEnd
-      year = this.dCreateTimeEnd.getFullYear();
-      month = this.dCreateTimeEnd.getMonth() + 1;
-      day = this.dCreateTimeEnd.getDate();
-      hour = this.dCreateTimeEnd.getHours();
-      minute = this.dCreateTimeEnd.getMinutes();
+        //Sucess
+        this.infoMessage = this.notification.infoMessage;
+        this.errors = [];
+        this.modalErrors = [];
+        //this.enableErrorNotification = false;
 
-      model.timeEnd = `${year}-${month}-${day} ${hour}:${minute}`;
+        //Re-constructor
+        //this.scheduleDto = this.scheduleObject(); 
 
-      
-      this.httpProtocol.post<IScheduleResponse>(`${this.apiBaseUrl}schedule/create`, model, this.httpOptions).subscribe(result => {
+        //Reload list
+        this.getAll();
+
+        this.closeModal("ButtonCreateClose");
         
-        this.notification = result.notification;    
-        if (this.notification.notificationCode == 200) {
-  
-          //Sucess
-          this.infoMessage = this.notification.infoMessage;
-          this.errors = [];
-          this.enableErrorNotification = false;
-  
-          //Re-constructor
-          this.scheduleDto = this.scheduleObject(); 
+      } else {
 
-          //Reload list
-          this.getAll();
-          
-        } else {
-  
-          //Error
-          var arrays = this.notification.detailErrorMessage;
-          this.errors = this.setErrors(arrays);
-          this.enableErrorNotification = true;
-          this.infoMessage = "";
-        }
-      }, errorResponse => {
-        //handle errors
-        if (errorResponse.status >= 400) {
-          var arrays = errorResponse.error.errors;
-          this.errors = this.setErrors(arrays);
-          this.enableErrorNotification = true;
-          this.infoMessage = "";
-        }
-      });
+        //Error
+        var arrays = this.notification.detailErrorMessage;
+        this.errors = [];
+        this.modalErrors = this.setErrors(arrays);
+        this.infoMessage = "";
+      }
+    }, errorResponse => {
+      //handle errors
+      if (errorResponse.status >= 400) {
+        var arrays = errorResponse.error.errors;
+        this.errors = [];
+        this.modalErrors = this.setErrors(arrays);
+        this.infoMessage = "";
+      }
+    });
   };
 
   /**
@@ -215,10 +220,6 @@ export class ScheduleComponent {
    * Edit - Open edit form.
    */
    public editConfirm(id: number) {
-    var buttonDetailClose = document.getElementById("ButtonDetailClose");
-    if (buttonDetailClose != null) {
-      buttonDetailClose.click();
-    }
 
     //Default
     this.errors = [];
@@ -278,13 +279,8 @@ export class ScheduleComponent {
         this.errors = [];
 
         this.getAll();
-        var buttonEditClose = document.getElementById("ButtonEditClose");
-        if (buttonEditClose != null) {
-          buttonEditClose.click();
-        }
-
-        //constructor scheduleDto
-        this.scheduleDto = this.scheduleObject();
+        
+        this.closeModal("ButtonEditClose");         
       } else {
 
         //Error
@@ -306,12 +302,7 @@ export class ScheduleComponent {
   /**
    * Delete - Open confirm delete form.
    */
-   public deleteConfirm(id: number) {
-
-    var buttonDetailClose = document.getElementById("ButtonDetailClose");
-    if (buttonDetailClose != null) {
-      buttonDetailClose.click();
-    }
+   public deleteConfirm(id: number) {    
 
     //Default
     this.errors = [];
@@ -352,20 +343,22 @@ export class ScheduleComponent {
         //Sucess
         this.infoMessage = this.notification.infoMessage;            
         this.errors = [];
-        this.enableErrorNotification = false;    
+        //this.enableErrorNotification = false;    
 
         //Re-constructor
-        this.scheduleDto = this.scheduleObject();
+        //this.scheduleDto = this.scheduleObject();
 
         //Reload list
         this.getAll();
+
+        this.closeModal("ButtonDeleteClose");
 
       } else {
 
         //Error
         var arrays = this.notification.detailErrorMessage;
         this.errors = this.setErrors(arrays);
-        this.enableErrorNotification = true;
+        //this.enableErrorNotification = true;
         this.infoMessage = "";
       }
     }, errorResponse => {
@@ -373,7 +366,7 @@ export class ScheduleComponent {
       if (errorResponse.status >= 400) {
         var arrays = errorResponse.error.errors;
         this.errors = this.setErrors(arrays);
-        this.enableErrorNotification = true;
+        //this.enableErrorNotification = true;
         this.infoMessage = "";
       }
     });
@@ -403,7 +396,7 @@ export class ScheduleComponent {
      */
    private scheduleObject(): IScheduleDto {
 
-    var obj: IScheduleDto = {
+    var model: IScheduleDto = {
         id: -1,
         title: "",
         creator: "",
@@ -420,7 +413,18 @@ export class ScheduleComponent {
         isDeleted: false      
     };
 
-    return obj;
+    return model;
   };
+
+  /**
+   * closeModal event
+   * @param buttonId : ButtonCreateClose| ButtonDetailClose | ButtonEditClose | ButtonDeleteClose
+   */
+  private closeModal(buttonId: string): void {
+    var buttonClose = document.getElementById(buttonId);
+    if (buttonClose != null) {
+      buttonClose.click();
+    }
+  }
 
 }
