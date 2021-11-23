@@ -3,7 +3,7 @@
         <button type="button" class="btn btn-danger" (click) = "back('mode_list')">Back</button>        
     </div>
 
-    <div class="alert alert-danger alert-dismissible" role="alert" *ngIf="enableErrorNotification">
+    <div class="alert alert-danger alert-dismissible" role="alert" *ngIf="errors && errors.length > 0">
         <ul>
             <li *ngFor="let err of errors">
               {{err}}

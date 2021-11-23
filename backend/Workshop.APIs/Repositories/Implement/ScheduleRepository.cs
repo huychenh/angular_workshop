@@ -54,6 +54,18 @@ namespace Workshop.APIs.Repositories.Implement
             }
         }
 
+        public IEnumerable<ScheduleModel> GetAllByUserId(int userId)
+        {
+            try
+            {
+                return _context.Schedules.Where(k => k.IsActive == true && k.IsDeleted == false && k.WsUserId == userId).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public ScheduleModel GetById(int id)
         {
             try

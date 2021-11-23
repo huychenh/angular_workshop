@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 import { GlobalComponent } from "../global.component";
 import { IWsUserDto } from "../interfaces/iWsUserDto";
@@ -38,6 +39,7 @@ export class UserComponent {
   public wsUserDto: IWsUserDto = this.wsUserObject();
   public enableErrorNotification: boolean = false;
   public editId: number = 0;
+  private router: Router;
   
   //Default headers for http.
   private httpOptions = {
@@ -46,8 +48,9 @@ export class UserComponent {
       })
   };
 
-  constructor(http: HttpClient) {
+  constructor(http: HttpClient, route: Router) {
     this.httpProtocol = http;
+    this.router = route;
   }
 
   ngOnInit() {
@@ -228,6 +231,18 @@ export class UserComponent {
         }
       });
   };
+
+  /**
+   * schedule
+   * @param id : number
+   */
+  public schedule(id: number): void {
+    this.router.navigate(['/schedule/'], {
+      queryParams: { userId: id }
+   });
+
+
+  }
 
 
   //Cancel

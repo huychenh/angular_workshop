@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
+
 import { GlobalComponent } from "../global.component";
 import { INotificationDto } from "../interfaces/iNotificationDto";
 import { IScheduleDto } from '../interfaces/iScheduleDto';
@@ -39,6 +41,8 @@ export class ScheduleComponent {
   public isLoading: boolean = false;
   public apiBaseUrl: string = GlobalComponent.apiBaseUrl;
   public scheduleDto: IScheduleDto = this.scheduleObject();  
+  private activeRouter: ActivatedRoute;
+  public userId: number = 0;
     
   //Default headers for http.
   private httpOptions = {
@@ -47,13 +51,19 @@ export class ScheduleComponent {
       })
   };
 
-  constructor(http: HttpClient) {
-    this.httpProtocol = http;
+  constructor(http: HttpClient, activeRoute: ActivatedRoute) {
+    this.httpProtocol = http;    
+    this.activeRouter = activeRoute;
   }
 
   ngOnInit() {
-    //Get the list.
-    this.getAll();
+
+    this.activeRouter.queryParams.subscribe(params => {
+      this.userId = params['userId'];        
+   });
+
+   //Get the list by userId
+   this.getAll();
   }
 
   /**
@@ -61,12 +71,10 @@ export class ScheduleComponent {
     */
   public getAll(): void {      
       this.isLoading = true;
-      this.httpProtocol.get<IScheduleResponse>(`${this.apiBaseUrl}schedule/list`).subscribe(result => {                    
+      this.httpProtocol.get<IScheduleResponse>(`${this.apiBaseUrl}schedule/listByUser/${this.userId != undefined? this.userId : 0}`).subscribe(result => {                    
       this.schedules = result.schedules;
       
       this.isLoading = false;
-      // this.enableErrorNotification = false;
-      // this.infoMessage = "";
 
       }, errorResponse => {
       //handle errors
@@ -101,7 +109,6 @@ export class ScheduleComponent {
   */
   public closeNotify(isErrorNotify: boolean = false): void {
     if(isErrorNotify) {
-        //this.enableErrorNotification = false;
       this.errors = [];
     } else {
       this.infoMessage = "";
@@ -139,7 +146,7 @@ export class ScheduleComponent {
       location: scheduleDto.location,
       timeStart: "",
       timeEnd: "",
-      wsUserId: 1
+      wsUserId: this.userId != undefined? this.userId : 1
     };
 
     //timeStart
@@ -171,10 +178,6 @@ export class ScheduleComponent {
         this.infoMessage = this.notification.infoMessage;
         this.errors = [];
         this.modalErrors = [];
-        //this.enableErrorNotification = false;
-
-        //Re-constructor
-        //this.scheduleDto = this.scheduleObject(); 
 
         //Reload list
         this.getAll();
@@ -219,7 +222,7 @@ export class ScheduleComponent {
   /**
    * Edit - Open edit form.
    */
-   public editConfirm(id: number) {
+   public editConfirm(id: number): void {
 
     //Default
     this.errors = [];
@@ -343,10 +346,6 @@ export class ScheduleComponent {
         //Sucess
         this.infoMessage = this.notification.infoMessage;            
         this.errors = [];
-        //this.enableErrorNotification = false;    
-
-        //Re-constructor
-        //this.scheduleDto = this.scheduleObject();
 
         //Reload list
         this.getAll();
@@ -358,7 +357,6 @@ export class ScheduleComponent {
         //Error
         var arrays = this.notification.detailErrorMessage;
         this.errors = this.setErrors(arrays);
-        //this.enableErrorNotification = true;
         this.infoMessage = "";
       }
     }, errorResponse => {
@@ -366,7 +364,6 @@ export class ScheduleComponent {
       if (errorResponse.status >= 400) {
         var arrays = errorResponse.error.errors;
         this.errors = this.setErrors(arrays);
-        //this.enableErrorNotification = true;
         this.infoMessage = "";
       }
     });

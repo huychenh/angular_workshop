@@ -2,10 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Globalization;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 using Workshop.APIs.Models;
 using Workshop.APIs.Repositories;
 using Workshop.Common.Models;
@@ -36,6 +34,36 @@ namespace Workshop.APIs.Controllers
             try
             {
                 response.Schedules = _scheduleRepository.GetAll();
+            }
+            catch (Exception ex)
+            {
+                response.Notification = new NotificationDto
+                {
+                    NotificationCode = HttpStatusCode.InternalServerError,
+                    ErrorMessage = ex.Message
+                };
+            }
+
+            return response;
+        }
+
+        [HttpGet]
+        [Route("listByUser/{userId}")]
+        public ScheduleResponse GetByUserId(int userId)
+        {
+            var response = new ScheduleResponse();
+
+            try
+            {
+                if(userId == 0)
+                {
+                    response.Schedules = _scheduleRepository.GetAll();
+                }
+                else
+                {
+                    response.Schedules = _scheduleRepository.GetAllByUserId(userId);
+                }
+                
             }
             catch (Exception ex)
             {

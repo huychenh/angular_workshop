@@ -29,7 +29,6 @@ export class TaskEditComponent implements OnInit{
      };
      
      public errors: string[] = [];
-     public enableErrorNotification: boolean = false;
      public infoMessage: string = "";    
      public apiBaseUrl: string = GlobalComponent.apiBaseUrl;
  
@@ -47,9 +46,7 @@ export class TaskEditComponent implements OnInit{
     @Output() eventToEmit = new EventEmitter<ITaskEvent>();
     
     constructor(http: HttpClient) {
-        this.httpProtocol = http;
-        this.errors = [];
-        this.enableErrorNotification = false;        
+        this.httpProtocol = http; 
     }
 
     ngOnInit() {        
@@ -87,13 +84,11 @@ export class TaskEditComponent implements OnInit{
             //Sucess
             this.infoMessage = this.notification.infoMessage;
             this.errors = [];
-            this.enableErrorNotification = false;    
           } else {
     
             //Error
             var arrays = this.notification.detailErrorMessage;
             this.errors = this.setErrors(arrays);
-            this.enableErrorNotification = true;
             this.infoMessage = "";
           }
         }, errorResponse => {
@@ -101,7 +96,6 @@ export class TaskEditComponent implements OnInit{
           if (errorResponse.status >= 400) {
             var arrays = errorResponse.error.errors;
             this.errors = this.setErrors(arrays);
-            this.enableErrorNotification = true;
             this.infoMessage = "";
           }
         });
@@ -117,9 +111,10 @@ export class TaskEditComponent implements OnInit{
             return;
         }
 
-        var model = this.taskDeleteObject();
-        model.id = taskDto.id;
-        model.modifiedBy = "System";
+        var model: ITaskDelete = {
+            id: taskDto.id,            
+            modifiedBy: "System"            
+        };
 
         this.httpProtocol.put<ITaskResponse>(`${this.apiBaseUrl}task/delete`, model, this.httpOptions).subscribe(result => {
           //var res = result;
@@ -130,7 +125,6 @@ export class TaskEditComponent implements OnInit{
             //Sucess
             this.infoMessage = this.notification.infoMessage;            
             this.errors = [];
-            this.enableErrorNotification = false;    
 
             //Auto call back function
             setTimeout(() => {
@@ -142,7 +136,6 @@ export class TaskEditComponent implements OnInit{
             //Error
             var arrays = this.notification.detailErrorMessage;
             this.errors = this.setErrors(arrays);
-            this.enableErrorNotification = true;
             this.infoMessage = "";
           }
         }, errorResponse => {
@@ -150,7 +143,6 @@ export class TaskEditComponent implements OnInit{
           if (errorResponse.status >= 400) {
             var arrays = errorResponse.error.errors;
             this.errors = this.setErrors(arrays);
-            this.enableErrorNotification = true;
             this.infoMessage = "";
           }
         });
@@ -185,7 +177,7 @@ export class TaskEditComponent implements OnInit{
      */
     public closeNotify(isErrorNotify: boolean = false): void {
         if(isErrorNotify) {
-            this.enableErrorNotification = false;
+            this.errors = [];
         } else {
             this.infoMessage = "";
         }
@@ -209,18 +201,6 @@ export class TaskEditComponent implements OnInit{
             isDeleted: false      
         };
 
-        return obj;
-    };
-
-    /**
-     * Task Delete Object
-     * @returns : ITaskDelete
-     */
-    private taskDeleteObject(): ITaskDelete {
-        var obj: ITaskDelete = {
-            id: -1,            
-            modifiedBy: ""            
-        };
         return obj;
     };
 

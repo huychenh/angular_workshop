@@ -35,7 +35,7 @@
                             <h5>{{item.jobRole}}</h5>
                             <input type="text" class="form-control" [(ngModel)]="wsUserDto.jobRole"  name="jobRole" placeholder="Role..."  *ngIf="(actionMode == 'mode_add' && item.id == -1) || (actionMode == 'mode_edit' && item.id == editId)" />
                         </div>
-                        <button type="button" class="btn btn-primary button-userinfo" (click)="add()">Schedule</button>                                        
+                        <button type="button" class="btn btn-primary button-userinfo" (click)="schedule(item.id)">Schedule</button>                                        
                     </div>
                     <div class="bottom-userinfo">
                         <button type="button" (click)="details(item.id)" class="btn btn-light button-userinfo" *ngIf="(actionMode == 'mode_list' && item.id != -1) || (item.id != editId && item.id != -1)">Edit</button>&nbsp;

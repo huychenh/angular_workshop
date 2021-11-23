@@ -10,6 +10,8 @@ namespace Workshop.APIs.Repositories
     {
         public IEnumerable<ScheduleModel> GetAll();
 
+        public IEnumerable<ScheduleModel> GetAllByUserId(int userId);
+
         public ScheduleModel GetById(int id);
 
         public bool Delete(ScheduleModel model);

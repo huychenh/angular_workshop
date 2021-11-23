@@ -29,7 +29,6 @@ export class TaskCreateComponent {
     };
     
     public errors: string[] = [];
-    public enableErrorNotification: boolean = false;
     public infoMessage: string = "";    
     public apiBaseUrl: string = GlobalComponent.apiBaseUrl;
 
@@ -45,8 +44,6 @@ export class TaskCreateComponent {
 
     constructor(http: HttpClient) {
         this.httpProtocol = http;
-        this.errors = [];
-        this.enableErrorNotification = false;
     }
 
     /**
@@ -62,23 +59,11 @@ export class TaskCreateComponent {
     }
 
     /**
-     * Re-constructor the create task.
-     */
-    private taskCreateObject(): any {
-        var obj: ITaskCreate = {
-            title: "",
-            description: "",
-            status: "New"      
-        };
-        return obj;
-    };
-
-    /**
      * Re-constructor the task object.
      */
     private taskObject(): ITaskDto {
 
-        var obj: ITaskDto = {
+        var model: ITaskDto = {
             id: -1,
             title: "",
             description: "",
@@ -91,15 +76,20 @@ export class TaskCreateComponent {
             isDeleted: false      
         };
 
-        return obj;
+        return model;
     };
 
     /**
      * Save task
      * @param taskDto : ITaskDto
      */
-    public save(taskDto: ITaskDto): void {        
-        var model = this.taskCreateObject();
+    public save(taskDto: ITaskDto): void {    
+        var model: ITaskCreate = {
+            title: "",
+            description: "",
+            status: "New"      
+        };
+
         model.title = taskDto.title;
         model.description = taskDto.description;
         model.status = taskDto.status !== '' ? taskDto.status : "New";
@@ -112,7 +102,6 @@ export class TaskCreateComponent {
             //Sucess
             this.infoMessage = this.notification.infoMessage;
             this.errors = [];
-            this.enableErrorNotification = false;
     
             //Re-constructor
             this.taskDto = this.taskObject();
@@ -121,7 +110,6 @@ export class TaskCreateComponent {
             //Error
             var arrays = this.notification.detailErrorMessage;
             this.errors = this.setErrors(arrays);
-            this.enableErrorNotification = true;
             this.infoMessage = "";
           }
         }, errorResponse => {
@@ -129,7 +117,6 @@ export class TaskCreateComponent {
           if (errorResponse.status >= 400) {
             var arrays = errorResponse.error.errors;
             this.errors = this.setErrors(arrays);
-            this.enableErrorNotification = true;
             this.infoMessage = "";
           }
         });
@@ -148,7 +135,7 @@ export class TaskCreateComponent {
      */
     public closeNotify(isErrorNotify: boolean = false): void {
         if(isErrorNotify) {
-            this.enableErrorNotification = false;
+            this.errors = [];
         } else {
             this.infoMessage = "";
         }
@@ -161,14 +148,14 @@ export class TaskCreateComponent {
         var result = [];
 
         if (errorArr.hasOwnProperty("Title")) {
-        var nameErrors = errorArr["Title"];
-        for (var item in nameErrors) {
-            result.push(nameErrors[item]);
-        }
+            var nameErrors = errorArr["Title"];
+            for (var item in nameErrors) {
+                result.push(nameErrors[item]);
+            }
         }
 
         if (result.length == 0) {
-        result.push("Something went wrong! " + errorArr.InternalError);
+            result.push("Something went wrong! " + errorArr.InternalError);
         }
         return result;
     }
