@@ -1,46 +1,23 @@
 import { Component } from "@angular/core";
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { GlobalComponent } from "../global.component";
 import { ITaskDto } from "../interfaces/iTaskDto";
-import { INotificationDto } from "../interfaces/iNotificationDto";
-import { ITaskResponse } from "../interfaces/iTaskResponse";
+import { TaskService } from "./task.service";
 
 @Component({
-    selector: 'app-taskdonelist',    
+    selector: 'app-taskdonelist',
     templateUrl: './taskdonelist.component.html',
-    styleUrls: ['./taskdonelist.component.css']
+    styleUrls: ['./taskdonelist.component.css'],
+    providers: [TaskService]
 })
 
-export class TaskDoneListComponent {   
+export class TaskDoneListComponent {
 
-    isShown: boolean = false ; // hidden by default
-    
+    isShown: boolean = false; // hidden by default
+
     //Declare variables.
-    private httpProtocol: HttpClient;    
     public tasks: ITaskDto[] = [];
-    public task: ITaskDto = {
-        id: 0,
-        title: "",
-        description: "",
-        status: "",
-        createdDate: "",
-        createdBy: "",
-        modifiedDate: "",
-        modifiedBy: "",
-        isActive: false,
-        isDeleted: false
-    };
+    public taskDto: ITaskDto = this.taskObject();
 
-    public notification: INotificationDto = {
-        id: 0,
-        notificationCode: 0,
-        infoMessage: "",
-        errorMessage: "",
-        detailErrorMessage: []
-    };
-    
-    public listLength: number = 0;
     public taskStatus: string = "Done";
     public errors: string[] = [];
     public infoMessage: string = "";
@@ -48,10 +25,12 @@ export class TaskDoneListComponent {
 
     public isActiveTaskItem: boolean = false;
     public idActiveTaskItem: number = 0;
-    public apiBaseUrl: string = GlobalComponent.apiBaseUrl;
 
-    constructor(http: HttpClient) {
-        this.httpProtocol = http;
+
+    private taskService: TaskService;
+
+    constructor(service: TaskService) {
+        this.taskService = service;
     }
 
     ngOnInit() {
@@ -62,42 +41,35 @@ export class TaskDoneListComponent {
     /**
      * Get the task list by status = 'Progress'.
      */
-     public getAll(status: string): void {
-        this.isLoading = true;
-        this.httpProtocol.get<ITaskResponse>(this.apiBaseUrl + 'task/listByStatus/' + status).subscribe(result => {        
-        this.tasks = result.tasks;
-        this.listLength = this.tasks.length;
-        this.isLoading = false;
-        }, errorResponse => {
-        //handle errors
-        if (errorResponse.status >= 400) {
-            var arrays = errorResponse.error.errors;
-            this.errors = this.setErrors(arrays);
-        }
+    public getAll(status: string): void {
 
-        this.isLoading = false;
+        this.taskService.getListByStatus(status).subscribe(result => {        
+            this.callbackHandler("LISTBYSTATUS", result);
+        }, (errorResponse): void => {        
+            this.callbackHandler("LISTBYSTATUS", null, errorResponse);
         });
     }
 
-
     /**
-     * Set errors for the error array.
+     * Re-constructor the task object.
      */
-    private setErrors(errorArr: any) {
-        var result = [];
+    private taskObject(): ITaskDto {
 
-        if (errorArr.hasOwnProperty("Title")) {
-        var nameErrors = errorArr["Title"];
-        for (var item in nameErrors) {
-            result.push(nameErrors[item]);
-        }
-        }
+        var model: ITaskDto = {
+            id: -1,
+            title: "",
+            description: "",
+            status: "",
+            createdDate: "",
+            createdBy: "",
+            modifiedDate: "",
+            modifiedBy: "",
+            isActive: false,
+            isDeleted: false
+        };
 
-        if (result.length == 0) {
-        result.push("Something went wrong! " + errorArr.InternalError);
-        }
-        return result;
-    }
+        return model;
+    };
 
     /**
      * toggleShow function
@@ -115,20 +87,13 @@ export class TaskDoneListComponent {
     public detail(id: number) {
         this.idActiveTaskItem = id;
         this.isActiveTaskItem = true;
-
         this.isShown = true;
         this.isLoading = true;
 
-        this.httpProtocol.get<ITaskResponse>(this.apiBaseUrl + 'task/details/' + id).subscribe(result => {
-            this.isLoading = false;
-            this.task = result.task;        
-        }, errorResponse => {
-            //handle errors
-            if (errorResponse.status >= 400) {
-                var arrays = errorResponse.error.errors;
-                this.errors = this.setErrors(arrays);
-            }
-            this.isLoading = false;
+        this.taskService.details(id).subscribe(result => {
+            this.callbackHandler("DETAILS", result);
+        }, (errorResponse): void => {
+            this.callbackHandler("DETAILS", null, errorResponse);       
         });
     }
 
@@ -137,7 +102,80 @@ export class TaskDoneListComponent {
      * @param id : TaskId
      * @returns 
      */
-    public isActiveItem(id: number) {        
+    public isActiveItem(id: number) {
         return (id == this.idActiveTaskItem && this.isActiveTaskItem);
     }
+
+
+
+    /**
+     * 
+     * @param action : string - CREATE | EDIT | DELETE | DETAILS
+     * @param result : any
+     * @param errorResponse : any
+     */
+    private callbackHandler(action: string, result: any = null, errorResponse: any = null): void {
+
+        switch (action) {
+
+            case "CREATE":
+            case "EDIT":
+            case "DELETE":
+
+                if (result != null && result != undefined) {
+                    let notification = result.notification;
+                    if (notification.notificationCode == 200) {
+
+                        //Sucess
+                        this.infoMessage = notification.infoMessage;
+                        this.errors = [];
+                    }
+                }
+
+                break;
+
+            case "LISTBYSTATUS":
+
+                if (result != null && result != undefined) {
+                    this.tasks = result.tasks;               
+                }
+                break;
+
+            default: //case "DETAILS"
+                if (result != null && result != undefined) {
+                    this.taskDto = result.task;
+                }
+                break;
+        }
+
+        //errorResponse
+        if (errorResponse != null && errorResponse != undefined) {
+            if (errorResponse.status >= 400) {
+                var arrays = errorResponse.error.errors;
+                this.errors = this.setErrors(arrays);
+                this.infoMessage = "";
+            }
+        }
+        this.isLoading = false;
+    }
+
+    /**
+     * Set errors for the error array.
+     */
+    private setErrors(errorArr: any): any[] {
+        var result = [];
+
+        if (errorArr.hasOwnProperty("Title")) {
+            var nameErrors = errorArr["Title"];
+            for (var item in nameErrors) {
+                result.push(nameErrors[item]);
+            }
+        }
+
+        if (result.length == 0) {
+            result.push("Something went wrong! " + errorArr.InternalError);
+        }
+        return result;
+    }
+
 }

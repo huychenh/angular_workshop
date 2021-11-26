@@ -1,50 +1,33 @@
 import { Component, EventEmitter, Output } from "@angular/core";
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { GlobalComponent } from "../global.component";
 import { ITaskDto } from "../interfaces/iTaskDto";
-import { INotificationDto } from "../interfaces/iNotificationDto";
-import { ITaskResponse } from "../interfaces/iTaskResponse";
 import { ITaskEvent } from "../interfaces/iTaskEvent";
+import { TaskService } from "./task.service";
 
 @Component({
-    selector: 'app-tasknewlist',    
+    selector: 'app-tasknewlist',
     templateUrl: './tasknewlist.component.html',
-    styleUrls: ['./tasknewlist.component.css']
+    styleUrls: ['./tasknewlist.component.css'],
+    providers: [TaskService]
 })
 
 export class TaskNewListComponent {
-   
-    //Declare variables.
-    private httpProtocol: HttpClient;    
-    public tasks: ITaskDto[] = [];
 
-    public notification: INotificationDto = {
-        id: 0,
-        notificationCode: 0,
-        infoMessage: "",
-        errorMessage: "",
-        detailErrorMessage: []
-    };
-    
+    //Declare variables.
+    public tasks: ITaskDto[] = [];
     public taskStatus: string = "New";
     public errors: string[] = [];
     public infoMessage: string = "";
     public isLoading: boolean = false;
-    public apiBaseUrl: string = GlobalComponent.apiBaseUrl;
 
-    //Default headers for http.
-    private httpOptions = {
-        headers: new HttpHeaders({
-        "Content-Type": "application/json"
-        })
-    };
 
     //Using Output to send message to Parent Component
     @Output() eventToEmit = new EventEmitter<ITaskEvent>();
-    
-    constructor(http: HttpClient) {
-        this.httpProtocol = http;
+
+    private taskService: TaskService;
+
+    constructor(service: TaskService) {
+        this.taskService = service;
     }
 
     ngOnInit(): void {
@@ -57,33 +40,75 @@ export class TaskNewListComponent {
      * @param action: action Mode (mode_list | mode_add | mode_edit)
      * @param taskId: taskId 
      */
-    public actionTask(action: string, taskId: number = 0): void {        
+    public actionTask(action: string, taskId: number = 0): void {
         var taskEvent: ITaskEvent = {
-            taskId : taskId,
-            actionMode : action
+            taskId: taskId,
+            actionMode: action
         };
         this.eventToEmit.emit(taskEvent);
     }
 
-     /**
-     * Get the task list by status = 'New'.
-     */
+    /**
+    * Get the task list by status = 'New'.
+    */
     public getAll(status: string): void {
         this.isLoading = true;
-        this.httpProtocol.get<ITaskResponse>(this.apiBaseUrl + 'task/listByStatus/' + status).subscribe(result => {        
-        this.tasks = result.tasks;
-        this.isLoading = false;
-        }, errorResponse => {
-        //handle errors
-        if (errorResponse.status >= 400) {
-            var arrays = errorResponse.error.errors;
-            this.errors = this.setErrors(arrays);
-        }
 
-        this.isLoading = false;
+        this.taskService.getListByStatus(status).subscribe(result => {
+            this.callbackHandler("LISTBYSTATUS", result);
+        }, (errorResponse): void => {
+            this.callbackHandler("LISTBYSTATUS", null, errorResponse);
         });
     }
 
+
+    /**
+     * 
+     * @param action : string - CREATE | EDIT | DELETE | DETAILS
+     * @param result : any
+     * @param errorResponse : any
+     */
+    private callbackHandler(action: string, result: any = null, errorResponse: any = null): void {
+
+        switch (action) {
+
+            case "CREATE":
+            case "EDIT":
+            case "DELETE":
+
+                if (result != null && result != undefined) {
+                    let notification = result.notification;
+                    if (notification.notificationCode == 200) {
+
+                        //Sucess
+                        this.infoMessage = notification.infoMessage;
+                        this.errors = [];
+                    }
+                }
+
+                break;
+
+            case "LISTBYSTATUS":
+
+                if (result != null && result != undefined) {
+                    this.tasks = result.tasks;
+                }
+                break;
+
+            default: //case "DETAILS"                
+                break;
+        }
+
+        //errorResponse
+        if (errorResponse != null && errorResponse != undefined) {
+            if (errorResponse.status >= 400) {
+                var arrays = errorResponse.error.errors;
+                this.errors = this.setErrors(arrays);
+                this.infoMessage = "";
+            }
+        }
+        this.isLoading = false;
+    }
 
     /**
      * Set errors for the error array.
@@ -92,15 +117,16 @@ export class TaskNewListComponent {
         var result = [];
 
         if (errorArr.hasOwnProperty("Title")) {
-        var nameErrors = errorArr["Title"];
-        for (var item in nameErrors) {
-            result.push(nameErrors[item]);
-        }
+            var nameErrors = errorArr["Title"];
+            for (var item in nameErrors) {
+                result.push(nameErrors[item]);
+            }
         }
 
         if (result.length == 0) {
-        result.push("Something went wrong! " + errorArr.InternalError);
+            result.push("Something went wrong! " + errorArr.InternalError);
         }
         return result;
     }
+
 }

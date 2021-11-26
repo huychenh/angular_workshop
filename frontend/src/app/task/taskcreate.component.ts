@@ -1,49 +1,31 @@
 import { Component, EventEmitter, Output } from "@angular/core";
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { GlobalComponent } from "../global.component";
 import { ITaskDto } from "../interfaces/iTaskDto";
-import { INotificationDto } from "../interfaces/iNotificationDto";
-import { ITaskResponse } from "../interfaces/iTaskResponse";
 import { ITaskCreate } from "../interfaces/iTaskCreate";
 import { ITaskEvent } from "../interfaces/iTaskEvent";
+import { TaskService } from "./task.service";
 
 @Component({
-    selector: 'app-taskcreate',    
+    selector: 'app-taskcreate',
     templateUrl: './taskcreate.component.html',
-    styleUrls: ['./taskcreate.component.css']
+    styleUrls: ['./taskcreate.component.css'],
+    providers: [TaskService]
 })
 
-export class TaskCreateComponent {   
+export class TaskCreateComponent {
 
     //Declare variables.
-    private httpProtocol: HttpClient;
+    private taskService: TaskService;
     public taskDto: ITaskDto = this.taskObject();
 
-    public notification: INotificationDto = {
-        id: 0,
-        notificationCode: 0,
-        infoMessage: "",
-        errorMessage: "",
-        detailErrorMessage: []
-    };
-    
     public errors: string[] = [];
-    public infoMessage: string = "";    
-    public apiBaseUrl: string = GlobalComponent.apiBaseUrl;
-
-    //Default headers for http.
-    private httpOptions = {
-        headers: new HttpHeaders({
-            "Content-Type": "application/json"
-        })
-    };
+    public infoMessage: string = "";
 
     //Using Output to send message to Parent Component
     @Output() eventToEmit = new EventEmitter<ITaskEvent>();
 
-    constructor(http: HttpClient) {
-        this.httpProtocol = http;
+    constructor(service: TaskService) {
+        this.taskService = service;
     }
 
     /**
@@ -52,10 +34,10 @@ export class TaskCreateComponent {
      */
     public back(action: string): void {
         var taskEvent: ITaskEvent = {
-            taskId : 0,
-            actionMode : action
+            taskId: 0,
+            actionMode: action
         };
-        this.eventToEmit.emit(taskEvent);        
+        this.eventToEmit.emit(taskEvent);
     }
 
     /**
@@ -73,7 +55,7 @@ export class TaskCreateComponent {
             modifiedDate: "",
             modifiedBy: "",
             isActive: false,
-            isDeleted: false      
+            isDeleted: false
         };
 
         return model;
@@ -83,42 +65,19 @@ export class TaskCreateComponent {
      * Save task
      * @param taskDto : ITaskDto
      */
-    public save(taskDto: ITaskDto): void {    
+    public save(taskDto: ITaskDto) {
         var model: ITaskCreate = {
-            title: "",
-            description: "",
-            status: "New"      
+            title: taskDto.title,
+            description: taskDto.description,
+            status: taskDto.status !== '' ? taskDto.status : "New"
         };
 
-        model.title = taskDto.title;
-        model.description = taskDto.description;
-        model.status = taskDto.status !== '' ? taskDto.status : "New";
-        
-        this.httpProtocol.post<ITaskResponse>(`${this.apiBaseUrl}task/create`, model, this.httpOptions).subscribe(result => {
-          
-          this.notification = result.notification;    
-          if (this.notification.notificationCode == 200) {
-    
-            //Sucess
-            this.infoMessage = this.notification.infoMessage;
-            this.errors = [];
-    
-            //Re-constructor
-            this.taskDto = this.taskObject();
-          } else {
-    
-            //Error
-            var arrays = this.notification.detailErrorMessage;
-            this.errors = this.setErrors(arrays);
-            this.infoMessage = "";
-          }
-        }, errorResponse => {
-          //handle errors
-          if (errorResponse.status >= 400) {
-            var arrays = errorResponse.error.errors;
-            this.errors = this.setErrors(arrays);
-            this.infoMessage = "";
-          }
+        this.taskService.create(model).subscribe(result => {
+
+            this.callbackHandler("CREATE", result);
+        }, (errorResponse): void => {
+
+            this.callbackHandler("CREATE", null, errorResponse);
         });
     };
 
@@ -134,10 +93,53 @@ export class TaskCreateComponent {
      * Close error notification
      */
     public closeNotify(isErrorNotify: boolean = false): void {
-        if(isErrorNotify) {
+        if (isErrorNotify) {
             this.errors = [];
         } else {
             this.infoMessage = "";
+        }
+    }
+
+    /**
+     * 
+     * @param action : string - CREATE | EDIT | DELETE | DETAILS
+     * @param result : any
+     * @param errorResponse : any
+     */
+     private callbackHandler(action: string, result: any = null, errorResponse: any = null): void {
+
+        switch (action) {
+
+            case "CREATE":
+            case "EDIT":
+            case "DELETE":
+
+                if (result != null && result != undefined) {
+                    let notification = result.notification;
+                    if (notification.notificationCode == 200) {
+
+                        //Sucess
+                        this.infoMessage = notification.infoMessage;
+                        this.errors = [];
+                    }
+                }
+
+                break;
+            
+            default: //case "DETAILS"
+                if (result != null && result != undefined) {
+                    this.taskDto = result.task;
+                }
+                break;
+        }
+
+        //errorResponse
+        if (errorResponse != null && errorResponse != undefined) {
+            if (errorResponse.status >= 400) {
+                var arrays = errorResponse.error.errors;
+                this.errors = this.setErrors(arrays);
+                this.infoMessage = "";
+            }
         }
     }
 
@@ -159,4 +161,6 @@ export class TaskCreateComponent {
         }
         return result;
     }
+
+
 }
