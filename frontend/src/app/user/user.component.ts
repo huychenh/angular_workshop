@@ -1,11 +1,7 @@
 import { Component } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 
-import { GlobalComponent } from "../global.component";
 import { IWsUserDto } from "../interfaces/iWsUserDto";
-import { INotificationDto } from "../interfaces/iNotificationDto";
-import { IWsUserResponse } from "../interfaces/iWsUserResponse";
 import { IWsUserCreate } from '../interfaces/iWsUserCreate';
 import { IWsUserDelete } from '../interfaces/iWsUserDelete';
 import { UserService } from './user.service';

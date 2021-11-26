@@ -1,23 +1,20 @@
 import { Component } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 
-import { GlobalComponent } from "../global.component";
-import { INotificationDto } from "../interfaces/iNotificationDto";
 import { IScheduleDto } from '../interfaces/iScheduleDto';
-import { IScheduleResponse } from '../interfaces/iScheduleResponse';
 import { IScheduleCreate } from '../interfaces/IScheduleCreate';
 import { IScheduleDelete } from '../interfaces/IScheduleDelete';
+import { ScheduleService } from './schedule.service';
 
 @Component({
   selector: 'app-schedule-component',
-  templateUrl: './schedule.component.html'
+  templateUrl: './schedule.component.html',
+  providers: [ScheduleService]
 })
 
 export class ScheduleComponent {
 
   //Declare variables.
-  private httpProtocol: HttpClient;
   public schedules: IScheduleDto[] = [];
   public datePickerFormat = 'yyyy-MM-dd HH:mm';
 
@@ -26,33 +23,19 @@ export class ScheduleComponent {
   public dTimeStart = new Date();
   public dTimeEnd = new Date();
 
-  public notification: INotificationDto = {
-    id: 0,
-    notificationCode: 0,
-    infoMessage: "",
-    errorMessage: "",
-    detailErrorMessage: []
-  };
-
   public errors: string[] = [];
   public infoMessage: string = "";
   public modalErrors: string[] = [];
 
   public isLoading: boolean = false;
-  public apiBaseUrl: string = GlobalComponent.apiBaseUrl;
   public scheduleDto: IScheduleDto = this.scheduleObject();
   private activeRouter: ActivatedRoute;
   public userId: number = 0;
 
-  //Default headers for http.
-  private httpOptions = {
-    headers: new HttpHeaders({
-      "Content-Type": "application/json"
-    })
-  };
+  private scheduleService: ScheduleService;
 
-  constructor(http: HttpClient, activeRoute: ActivatedRoute) {
-    this.httpProtocol = http;
+  constructor(service: ScheduleService, activeRoute: ActivatedRoute) {
+    this.scheduleService = service;
     this.activeRouter = activeRoute;
   }
 
@@ -71,20 +54,13 @@ export class ScheduleComponent {
     */
   public getAll(): void {
     this.isLoading = true;
-    this.httpProtocol.get<IScheduleResponse>(`${this.apiBaseUrl}schedule/listByUser/${this.userId != undefined ? this.userId : 0}`).subscribe(result => {
-      this.schedules = result.schedules;
 
-      this.isLoading = false;
-
-    }, errorResponse => {
-      //handle errors
-      if (errorResponse.status >= 400) {
-        var arrays = errorResponse.error.errors;
-        this.errors = this.setErrors(arrays);
-      }
-
-      this.isLoading = false;
+    this.scheduleService.getListByUser(this.userId != undefined ? this.userId : 0).subscribe(result => {
+      this.callbackHandler("LISTBYUSER", result);
+    }, (errorResponse): void => {
+      this.callbackHandler("LISTBYUSER", null, errorResponse);
     });
+
   }
 
   /**
@@ -92,16 +68,13 @@ export class ScheduleComponent {
      */
   public details(id: number): void {
 
-    this.httpProtocol.get<IScheduleResponse>(`${this.apiBaseUrl}schedule/details/${id}`).subscribe(result => {
-      this.scheduleDto = result.schedule;
-
-    }, errorResponse => {
-      //handle errors
-      if (errorResponse.status >= 400) {
-        var arrays = errorResponse.error.errors;
-        this.errors = this.setErrors(arrays);
-      }
+    this.scheduleService.details(id).subscribe(result => {
+      this.callbackHandler("DETAILS", result);
+    }, (errorResponse): void => {
+      this.callbackHandler("DETAILS", null, errorResponse);
     });
+
+
   }
 
   /**
@@ -168,39 +141,12 @@ export class ScheduleComponent {
 
     model.timeEnd = `${year}-${month}-${day} ${hour}:${minute}`;
 
-
-    this.httpProtocol.post<IScheduleResponse>(`${this.apiBaseUrl}schedule/create`, model, this.httpOptions).subscribe(result => {
-
-      this.notification = result.notification;
-      if (this.notification.notificationCode == 200) {
-
-        //Sucess
-        this.infoMessage = this.notification.infoMessage;
-        this.errors = [];
-        this.modalErrors = [];
-
-        //Reload list
-        this.getAll();
-
-        this.closeModal("ButtonCreateClose");
-
-      } else {
-
-        //Error
-        var arrays = this.notification.detailErrorMessage;
-        this.errors = [];
-        this.modalErrors = this.setErrors(arrays);
-        this.infoMessage = "";
-      }
-    }, errorResponse => {
-      //handle errors
-      if (errorResponse.status >= 400) {
-        var arrays = errorResponse.error.errors;
-        this.errors = [];
-        this.modalErrors = this.setErrors(arrays);
-        this.infoMessage = "";
-      }
+    this.scheduleService.create(model).subscribe(result => {
+      this.callbackHandler("CREATE", result);
+    }, (errorResponse): void => {
+      this.callbackHandler("CREATE", null, errorResponse);
     });
+
   };
 
   /**
@@ -228,22 +174,13 @@ export class ScheduleComponent {
     this.errors = [];
     this.infoMessage = "";
 
-    //Get data from servers.
-    this.httpProtocol.get<IScheduleResponse>(this.apiBaseUrl + 'schedule/details/' + id).subscribe(result => {
-
-      //The category object.
-      this.scheduleDto = result.schedule;
-      this.dTimeStart = new Date(this.scheduleDto.timeStart);
-      this.dTimeEnd = new Date(this.scheduleDto.timeEnd);
-
-    }, errorResponse => {
-      //handle errors
-      if (errorResponse.status >= 400) {
-        var arrays = errorResponse.error.errors;
-        this.errors = this.setErrors(arrays);
-      }
-      this.isLoading = false;
+    this.scheduleService.details(id).subscribe(result => {
+      this.callbackHandler("DETAILS", result);
+    }, (errorResponse): void => {
+      this.callbackHandler("DETAILS", null, errorResponse);
     });
+
+
   };
 
   /**
@@ -271,33 +208,10 @@ export class ScheduleComponent {
 
     scheduleDto.timeEnd = `${year}-${month}-${day} ${hour}:${minute}`;
 
-    this.httpProtocol.put<IScheduleResponse>(`${this.apiBaseUrl}schedule/edit`, scheduleDto, this.httpOptions).subscribe(result => {
-      var res = result;
-      this.notification = res.notification;
-
-      if (this.notification.notificationCode == 200) {
-
-        //Sucess
-        this.infoMessage = this.notification.infoMessage;
-        this.errors = [];
-
-        this.getAll();
-
-        this.closeModal("ButtonEditClose");
-      } else {
-
-        //Error
-        var arrays = this.notification.detailErrorMessage;
-        this.errors = this.setErrors(arrays);
-      }
-      this.isLoading = false;
-    }, errorResponse => {
-      //handle errors
-      if (errorResponse.status >= 400) {
-        var arrays = errorResponse.error.errors;
-        this.errors = this.setErrors(arrays);
-      }
-      this.isLoading = false;
+    this.scheduleService.edit(scheduleDto).subscribe(result => {
+      this.callbackHandler("EDIT", result);
+    }, (errorResponse): void => {
+      this.callbackHandler("EDIT", null, errorResponse);
     });
 
   };
@@ -311,20 +225,12 @@ export class ScheduleComponent {
     this.errors = [];
     this.infoMessage = "";
 
-    //Get data from servers.
-    this.httpProtocol.get<IScheduleResponse>(this.apiBaseUrl + 'schedule/details/' + id).subscribe(result => {
-
-      //The scheduleDto object.
-      this.scheduleDto = result.schedule;
-
-    }, errorResponse => {
-      //handle errors
-      if (errorResponse.status >= 400) {
-        var arrays = errorResponse.error.errors;
-        this.errors = this.setErrors(arrays);
-      }
-      this.isLoading = false;
+    this.scheduleService.details(id).subscribe(result => {
+      this.callbackHandler("DETAILS", result);
+    }, (errorResponse): void => {
+      this.callbackHandler("DETAILS", null, errorResponse);
     });
+
   };
 
   /**
@@ -337,36 +243,12 @@ export class ScheduleComponent {
       modifiedBy: "System"
     };
 
-    this.httpProtocol.put<IScheduleResponse>(`${this.apiBaseUrl}schedule/delete`, model, this.httpOptions).subscribe(result => {
-      //var res = result;
-      this.notification = result.notification;
-
-      if (this.notification.notificationCode == 200) {
-
-        //Sucess
-        this.infoMessage = this.notification.infoMessage;
-        this.errors = [];
-
-        //Reload list
-        this.getAll();
-
-        this.closeModal("ButtonDeleteClose");
-
-      } else {
-
-        //Error
-        var arrays = this.notification.detailErrorMessage;
-        this.errors = this.setErrors(arrays);
-        this.infoMessage = "";
-      }
-    }, errorResponse => {
-      //handle errors
-      if (errorResponse.status >= 400) {
-        var arrays = errorResponse.error.errors;
-        this.errors = this.setErrors(arrays);
-        this.infoMessage = "";
-      }
+    this.scheduleService.delete(model).subscribe(result => {
+      this.callbackHandler("DELETE", result);
+    }, (errorResponse): void => {
+      this.callbackHandler("DELETE", null, errorResponse);
     });
+
   };
 
 
@@ -418,7 +300,50 @@ export class ScheduleComponent {
     switch (action) {
 
       case "CREATE":
+
+        this.errors = [];
+
+        if (result != null && result != undefined) {
+          let notification = result.notification;
+          if (notification.notificationCode == 200) {
+
+            //Sucess
+            this.infoMessage = notification.infoMessage;
+            this.modalErrors = [];
+
+            //Reload list
+            this.getAll();
+            this.closeModal("ButtonCreateClose");
+          }
+          else {
+
+            //Error
+            var arrays = notification.detailErrorMessage;
+            this.modalErrors = this.setErrors(arrays);
+            this.infoMessage = "";
+          }
+        }
+
+        break;
+
       case "EDIT":
+
+        if (result != null && result != undefined) {
+          let notification = result.notification;
+          if (notification.notificationCode == 200) {
+
+            //Sucess
+            this.infoMessage = notification.infoMessage;
+            this.errors = [];
+
+            //Reload list
+            this.getAll();
+            this.closeModal("ButtonEditClose");
+          }
+        }
+
+        break;
+
       case "DELETE":
 
         if (result != null && result != undefined) {
@@ -431,12 +356,13 @@ export class ScheduleComponent {
 
             //Reload list
             this.getAll();
+            this.closeModal("ButtonDeleteClose");
           }
         }
 
         break;
 
-      case "LIST":
+      case "LISTBYUSER":
 
         if (result != null && result != undefined) {
           this.schedules = result.schedules;
@@ -444,8 +370,11 @@ export class ScheduleComponent {
         break;
 
       default: //case "DETAILS"
+
         if (result != null && result != undefined) {
           this.scheduleDto = result.schedule;
+          this.dTimeStart = new Date(this.scheduleDto.timeStart);
+          this.dTimeEnd = new Date(this.scheduleDto.timeEnd);
         }
         break;
     }
@@ -469,6 +398,20 @@ export class ScheduleComponent {
 
     if (errorArr.hasOwnProperty("Title")) {
       var nameErrors = errorArr["Title"];
+      for (var item in nameErrors) {
+        result.push(nameErrors[item]);
+      }
+    }
+
+    if (errorArr.hasOwnProperty("Creator")) {
+      var nameErrors = errorArr["Creator"];
+      for (var item in nameErrors) {
+        result.push(nameErrors[item]);
+      }
+    }
+
+    if (errorArr.hasOwnProperty("Location")) {
+      var nameErrors = errorArr["Location"];
       for (var item in nameErrors) {
         result.push(nameErrors[item]);
       }

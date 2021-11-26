@@ -6,7 +6,7 @@ import { GlobalComponent } from '../global.component';
 import { IScheduleResponse } from '../interfaces/iScheduleResponse';
 
 @Injectable()
-export class UserService {
+export class ScheduleService {
 
     private httpProtocol: HttpClient;
 
@@ -64,7 +64,7 @@ export class UserService {
      * getAll
      * @returns 
      */
-    public getListByUser(): Observable<any> {        
-        return this.httpProtocol.get<IScheduleResponse>(`${this.apiBaseUrl}schedule/listByUser`);
+    public getListByUser(userId: number = 0): Observable<any> {        
+        return this.httpProtocol.get<IScheduleResponse>(`${this.apiBaseUrl}schedule/listByUser/${userId}`);
     }
 }
