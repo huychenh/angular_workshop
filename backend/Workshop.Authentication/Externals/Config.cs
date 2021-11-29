@@ -24,7 +24,7 @@ namespace Workshop.Authentication.Externals
             return new ApiResource[]
             {
                 new ApiResource("apis","My API"),
-                //new ApiResource(BookstoreConstants.AdminClientId, BookstoreConstants.AdminClientName, new [] { JwtClaimTypes.Role })
+                //new ApiResource(WorkshopConstants.AdminClientId, WorkshopConstants.AdminClientName, new [] { JwtClaimTypes.Role })
                 new ApiResource("web_mvc", "Web Mvc", new [] { JwtClaimTypes.Role })
             };
         }
@@ -36,16 +36,16 @@ namespace Workshop.Authentication.Externals
                 //Admin Mvc
                 new Client
                 {
-                    ClientId = "web_mvc", //BookstoreConstants.AdminClientId,
-                    ClientName = "Web Mvc",//BookstoreConstants.AdminClientName,
+                    ClientId = "web_mvc", //WorkshopConstants.AdminClientId,
+                    ClientName = "Web Mvc",//WorkshopConstants.AdminClientName,
                     RequireConsent = false,
                     AllowedGrantTypes = GrantTypes.HybridAndClientCredentials,
-                    //ClientSecrets = { new Secret(BookstoreConstants.AuthenSecretKey.Sha256()) },
+                    //ClientSecrets = { new Secret(WorkshopConstants.AuthenSecretKey.Sha256()) },
                     ClientSecrets = { new Secret("Web_Mvc is my secret key".Sha256()) },
                     //"Web_Mvc is my secret key for authentication."
-                    RedirectUris = { /*AdminMvcUrl*/ "https://localhost:44350/" + "signin-oidc" },
-                    FrontChannelLogoutUri = "https://localhost:44350/" + "signout-oidc",
-                    PostLogoutRedirectUris = { "https://localhost:44350/" + "signout-callback-oidc" },
+                    RedirectUris = { /*AdminMvcUrl*/ "https://localhost:44312/" + "signin-oidc" },
+                    FrontChannelLogoutUri = "https://localhost:44312/" + "signout-oidc",
+                    PostLogoutRedirectUris = { "https://localhost:44312/" + "signout-callback-oidc" },
 
                     AllowOfflineAccess = true,
                     AllowedScopes = { "openid", "profile", "apis", "roles" }
