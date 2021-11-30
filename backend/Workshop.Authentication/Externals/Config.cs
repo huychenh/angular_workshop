@@ -61,12 +61,12 @@ namespace Workshop.Authentication.Externals
                     RequireConsent = false,
                     RequirePkce = true,
                     RedirectUris = new List<string> {
-                        "http://localhost:3000/authentication/login-callback",
-                        "http://localhost:3000/"
+                        "http://localhost:4200/authentication/login-callback",
+                        "http://localhost:4200/"
                     },
                     PostLogoutRedirectUris = new List<string> {
-                        "http://localhost:3000/authentication/logout-callback",
-                        "http://localhost:3000/" 
+                        "http://localhost:4200/authentication/logout-callback",
+                        "http://localhost:4200/" 
                     },
                     AllowedScopes = {
                                       IdentityServerConstants.StandardScopes.OpenId,
@@ -76,7 +76,7 @@ namespace Workshop.Authentication.Externals
                                      },
                     AllowedCorsOrigins = new List<string>
                     {
-                        "http://localhost:3000",
+                        "http://localhost:4200",
                     },
                     AccessTokenLifetime = 86400
                 }
