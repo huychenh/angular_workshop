@@ -53,19 +53,19 @@ namespace Workshop.Authentication.Externals
                 },
                     new Client
                 {
-                    ClientId = "react-clients",
-                    ClientName = "react-clients",
+                    ClientId = "angular_client",
+                    ClientName = "angular_client",
                     AllowedGrantTypes = GrantTypes.Code,
                     AllowAccessTokensViaBrowser = true,
                     RequireClientSecret = false,
                     RequireConsent = false,
                     RequirePkce = true,
                     RedirectUris = new List<string> {
-                        "http://localhost:4200/authentication/login-callback",
+                        "http://localhost:4200/login-callback",
                         "http://localhost:4200/"
                     },
                     PostLogoutRedirectUris = new List<string> {
-                        "http://localhost:4200/authentication/logout-callback",
+                        "http://localhost:4200/logout-callback",
                         "http://localhost:4200/" 
                     },
                     AllowedScopes = {

@@ -4,7 +4,10 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { UserComponent } from './user/user.component';
 import { ScheduleComponent } from './schedule/schedule.component';
-import { LoginComponent } from './login/login.component';
+import { LoginComponent } from './authentication/login.component';
+import { LoginCallBackComponent } from './authentication/login-callback.component';
+import { LogoutComponent } from './authentication/logout.component';
+import { LogoutCallBackComponent } from './authentication/logout-callback.component';
 
 
 const routes: Routes = [
@@ -13,7 +16,10 @@ const routes: Routes = [
     path: 'user', component: UserComponent    
   },
   { path: 'schedule', component: ScheduleComponent },
-  { path: 'login', component: LoginComponent }
+  { path: 'login', component: LoginComponent },
+  { path: 'login-callback', component: LoginCallBackComponent },
+  { path: 'logout', component: LogoutComponent },
+  { path: 'logout-callback', component: LogoutCallBackComponent }
 ];
 
 @NgModule({

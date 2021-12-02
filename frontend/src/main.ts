@@ -3,8 +3,9 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
+import 'oidc-client';
 
-export function getBaseUrl() {
+export function getBaseUrl(): string {
   return document.getElementsByTagName('base')[0].href;
 }
 

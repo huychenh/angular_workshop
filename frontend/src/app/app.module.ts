@@ -14,16 +14,20 @@ import { TaskEditComponent } from './task/taskedit.component';
 import { TaskNewListComponent } from './task/tasknewlist.component';
 import { TaskProgressListComponent } from './task/taskprogresslist.component';
 
-
-import { UserComponent } from './user/user.component';
-import { ScheduleComponent } from './schedule/schedule.component';
-import { LoginComponent } from './login/login.component';
-
 import { UserInfoComponent } from './user/userInfo.component';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DateFilterPipe } from './date-filter.pipe';
 import { DatePipe } from '@angular/common';
+
+import { UserComponent } from './user/user.component';
+import { ScheduleComponent } from './schedule/schedule.component';
+import { LoginComponent } from './authentication/login.component';
+import { LoginCallBackComponent } from './authentication/login-callback.component';
+import { LogoutCallBackComponent } from './authentication/logout-callback.component';
+import { LogoutComponent } from './authentication/logout.component';
+
+
 
 
 @NgModule({
@@ -37,10 +41,13 @@ import { DatePipe } from '@angular/common';
     TaskNewListComponent,
     TaskProgressListComponent,
     UserComponent,
-    ScheduleComponent,
-    LoginComponent,
+    ScheduleComponent,    
     UserInfoComponent,
-    DateFilterPipe
+    DateFilterPipe,
+    LoginComponent,
+    LoginCallBackComponent,
+    LogoutCallBackComponent,
+    LogoutComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),    

@@ -27,6 +27,7 @@
     "moment": "^2.29.1",
     "ng-pick-datetime": "^7.0.0",
     "ngx-bootstrap": "^7.1.0",
+    "oidc-client": "^1.11.5",
     "open-iconic": "^1.1.1",
     "rxjs": "~6.6.0",
     "tslib": "^2.3.0",
