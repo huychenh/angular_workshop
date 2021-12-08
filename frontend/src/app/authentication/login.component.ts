@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from './auth.service';
 
 @Component({
@@ -9,20 +10,30 @@ import { AuthService } from './auth.service';
 
 export class LoginComponent implements OnInit {
 
-  private authService: AuthService;
+  public isLoggedIn: boolean = false;
 
-  constructor(service: AuthService) {
-    this.authService = service;
-  }
+  constructor(private authService: AuthService, private activatedRoute: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
 
-    let isLoggedIn = this.authService.isLoggedIn();
+    // this.activatedRoute.queryParamMap.subscribe(() => {
+      
+    //   if (!this.authService.isLoggedIn()) {
+    //     this.authService.login();
+    //   }
+    // });
 
-    if (!isLoggedIn) {
+    this.getLogin();
+  }
+
+  private async getLogin() {
+    this.isLoggedIn = <boolean>await this.authService.isLoggedIn();
+    console.log("login component - this.isLoggedIn: " + this.isLoggedIn);
+    if (!this.isLoggedIn) {
       this.authService.login();
+    } else {
+      this.router.navigate(['/']);
     }
-
   }
 
 }

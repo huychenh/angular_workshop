@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { User } from "oidc-client";
 import { AuthService } from "../authentication/auth.service";
 
 @Component({
@@ -9,18 +10,21 @@ import { AuthService } from "../authentication/auth.service";
 })
 
 export class NavMenuComponent {
-    isExpanded = false;    
-    public claims: any;
-    private authService: AuthService;
+    isExpanded = false;
+    public isLoggedIn: boolean = false;
+    public email: any = "HuyChenh@gmail.com";
 
-    constructor(service: AuthService) {
-        this.authService = service;
+    constructor(private authService: AuthService) { }
+
+    ngOnInit() {        
+        // this.authService.getUser().then(user => {
+        //     this.token = user?.access_token;
+        // });
+        this.getLogin();
     }
 
-    ngOnInit() {
-        this.authService.getUser().then(async user => {
-            this.claims = user?.access_token;
-        });        
+    private async getLogin() {
+        this.isLoggedIn = <boolean> await this.authService.isLoggedIn();
     }
 
     public collapse(): void {

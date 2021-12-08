@@ -26,7 +26,8 @@ import { LoginComponent } from './authentication/login.component';
 import { LoginCallBackComponent } from './authentication/login-callback.component';
 import { LogoutCallBackComponent } from './authentication/logout-callback.component';
 import { LogoutComponent } from './authentication/logout.component';
-
+import { AuthService } from './authentication/auth.service';
+import { AuthGuardService } from './authentication/auth-guard.service';
 
 
 
@@ -58,7 +59,7 @@ import { LogoutComponent } from './authentication/logout.component';
     OwlNativeDateTimeModule,
     BrowserAnimationsModule
   ],
-  providers: [DatePipe],
+  providers: [DatePipe, AuthService, AuthGuardService],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

@@ -19,7 +19,11 @@ export class LoginCallBackComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.authService.loginCompleteAsync(window.location.href);
+    this.loginComplete();
+  }
+
+  private async loginComplete(): Promise<void> {    
+    await this.authService.loginComplete(window.location.href);    
     this.router.navigate(['/']);
   }
 

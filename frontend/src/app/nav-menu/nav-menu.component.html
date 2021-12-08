@@ -12,20 +12,18 @@
             <li class="nav-item" [routerLinkActive]="['link-active']">
               <a class="nav-link" [routerLink]="['/schedule']">Schedule</a>
             </li>
-            <li class="nav-item" [routerLinkActive]="['link-active']" *ngIf = "claims == undefined">
+            <li class="nav-item" [routerLinkActive]="['link-active']" *ngIf = "!isLoggedIn">
               <a class="nav-link" [routerLink]="['/login']">Login</a>
             </li>
-            <li class="nav-item" [routerLinkActive]="['link-active']" *ngIf = "claims != undefined">
+            <li class="nav-item" [routerLinkActive]="['link-active']" *ngIf = "isLoggedIn">
               <a class="nav-link" [routerLink]="['/logout']">Logout</a>
             </li>
           </ul>               
         </div>    
         <div class="navbar-collapse collapse d-sm-inline-flex" [ngClass]="{ show: isExpanded }">
-          <h1>Angular Sprint</h1>
-        </div>    
+          <h1>Angular Sprint</h1>                    
+          <h4 *ngIf="isLoggedIn">Username: {{email}}</h4>
+        </div>        
       </div>
     </nav>   
 </header>
-<strong>
-  Claims: {{claims}}
-</strong>

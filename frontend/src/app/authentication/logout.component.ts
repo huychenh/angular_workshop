@@ -9,20 +9,9 @@ import { AuthService } from './auth.service';
 
 export class LogoutComponent {
 
-  private authService: AuthService;
-
-  constructor(service: AuthService) {
-    this.authService = service;
-  }
+  constructor(private authService: AuthService) { }
 
   ngOnInit() {
-
-    // let isLoggedIn = this.authService.isLoggedIn();
-
-    // if (isLoggedIn) {
-    //   this.authService.startAuthentication();
-    // }
-
     this.authService.logout();
   }
 

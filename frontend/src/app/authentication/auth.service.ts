@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-//import { Observable } from 'rxjs';
 import { User, UserManager } from 'oidc-client';
 
 @Injectable()
 export class AuthService {
 
     private userManager: UserManager;
-    
+
     constructor() {
+
         const settings = {
             authority: 'https://localhost:44321/',
             client_id: 'angular_client',
@@ -22,17 +22,16 @@ export class AuthService {
         this.userManager = new UserManager(settings);
     }
 
-    public async getUser(): Promise<User | null> {
-        return await this.userManager.getUser();
+    public getUser(): Promise<User | null> {        
+        return this.userManager.getUser();
     }
-
 
     public login(): Promise<void> {
         return this.userManager.signinRedirect();
     }
 
-    public async loginCompleteAsync(url: string): Promise<User> {
-        return await this.userManager.signinCallback(url);
+    public loginComplete(url: string): Promise<User> {
+        return this.userManager.signinCallback(url);
     }
 
     public logout(): Promise<void> {
@@ -43,31 +42,39 @@ export class AuthService {
         await this.userManager.signoutCallback(url);
     }
 
-    public isLoggedIn(): boolean {
+    public async isLoggedIn(): Promise<boolean> {
+        let user = await this.getUser();
+        return user != null && user != undefined && !user.expired;
 
-        this.getUser().then(user => {
-            return user != null && user != undefined && !user.expired;
-        });
-
-        return false;
+        // .then(user => {
+        //     return user != null && user != undefined && !user.expired;
+        // });
+        // return false;
     }
 
-    // public getClaims(): any {
-    //     return this.user.profile;
+    // public async getAccessToken(): Promise<string> {
+
+    //     console.log("auth.service - getAccessToken - line 57");
+    //     let token = "";
+    //     await this.getUser().then(user => {
+    //         console.log("auth.service - getAccessToken - line 60");
+    //         if (user != null && user != undefined && !user.expired) {
+    //             token = user.access_token;
+    //         }
+    //     });
+    //     console.log("auth.service - getAccessToken - line 65");
+    //     return token;
     // }
 
-    // public getAuthorizationHeaderValue(): string {
-    //     return `${this.user.token_type} ${this.user.access_token}`;
+    // public async getAccessToken(): Promise<string> {
+    //     let token = "";
+    //     let obj = await this.getUser();
+    //     if(obj != undefined) {
+    //         token = obj?.access_token;
+    //     }
+    //     console.log("auth.service - getAccessToken - line 78");
+    //     return token;        
     // }
 
-    // public startAuthentication(): Promise<void> {
-    //     return this.userManager.signinRedirect();
-    // }
-
-    // public async completeAuthentication(): Promise<void> {
-    //     // const user = await this.userManager.signinRedirectCallback();
-    //     // this.user = user;
-
-    //     this.userManager.signinRedirectCallback();        
-    // }
+    
 }

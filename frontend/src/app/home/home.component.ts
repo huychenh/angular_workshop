@@ -22,7 +22,7 @@ export class HomeComponent {
     constructor() {
         this.isModeList = true;
         this.isModeAdd = false;
-        this.isModeEdit = false;        
+        this.isModeEdit = false;
     }   
 
     /**
