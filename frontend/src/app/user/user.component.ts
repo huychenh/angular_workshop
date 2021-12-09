@@ -24,7 +24,7 @@ export class UserComponent {
 
   public actionMode: string = "mode_list";
   public wsUserDto: IWsUserDto = this.wsUserObject();
-  public enableErrorNotification: boolean = false;
+  //public enableErrorNotification: boolean = false;
   public editId: number = 0;
   private router: Router;
 
@@ -169,7 +169,8 @@ export class UserComponent {
     */
   public closeNotify(isErrorNotify: boolean = false): void {
     if (isErrorNotify) {
-      this.enableErrorNotification = false;
+      //this.enableErrorNotification = false;
+      this.errors = [];
     } else {
       this.infoMessage = "";
     }
@@ -181,7 +182,7 @@ export class UserComponent {
   public details(id: number): void {
     this.actionMode = "mode_edit";
     this.editId = id;
-    
+
     //Close all notifications
     this.closeNotify(false);
     this.closeNotify(true);
@@ -272,6 +273,10 @@ export class UserComponent {
 
             //Reload list
             this.getAll();
+          } else {
+            let arrays = notification.detailErrorMessage;
+            this.errors = this.setErrors(arrays);
+            this.infoMessage = "";
           }
         }
 

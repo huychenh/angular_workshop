@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { User, UserManager } from 'oidc-client';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class AuthService {
@@ -43,7 +44,7 @@ export class AuthService {
     }
 
     public async isLoggedIn(): Promise<boolean> {
-        let user = await this.getUser();
+        let user = await this.userManager.getUser();
         return user != null && user != undefined && !user.expired;
     }
 

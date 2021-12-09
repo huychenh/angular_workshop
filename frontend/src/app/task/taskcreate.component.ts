@@ -106,7 +106,7 @@ export class TaskCreateComponent {
      * @param result : any
      * @param errorResponse : any
      */
-     private callbackHandler(action: string, result: any = null, errorResponse: any = null): void {
+    private callbackHandler(action: string, result: any = null, errorResponse: any = null): void {
 
         switch (action) {
 
@@ -121,11 +121,15 @@ export class TaskCreateComponent {
                         //Sucess
                         this.infoMessage = notification.infoMessage;
                         this.errors = [];
+                    } else {
+                        let arrays = notification.detailErrorMessage;
+                        this.errors = this.setErrors(arrays);
+                        this.infoMessage = "";
                     }
                 }
 
                 break;
-            
+
             default: //case "DETAILS"
                 if (result != null && result != undefined) {
                     this.taskDto = result.task;

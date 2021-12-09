@@ -165,6 +165,10 @@ export class TaskEditComponent implements OnInit {
                         //Sucess
                         this.infoMessage = notification.infoMessage;
                         this.errors = [];
+                    }  else {
+                        let arrays = notification.detailErrorMessage;
+                        this.errors = this.setErrors(arrays);
+                        this.infoMessage = "";
                     }
                 }
 

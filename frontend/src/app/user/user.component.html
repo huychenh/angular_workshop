@@ -6,47 +6,58 @@
     <div class="alert alert-success alert-dismissible" role="alert" *ngIf="infoMessage">
         {{infoMessage}}
         <button type="button" class="close" aria-label="Close" (click)="closeNotify(false)">
-          <span aria-hidden="true">&times;</span>
+            <span aria-hidden="true">&times;</span>
         </button>
     </div>
-    <div class="row" *ngFor="let rowItem of groupUsers">        
-        <div class="col" *ngFor="let item of rowItem; index as index">     
+    <div class="row" *ngFor="let rowItem of groupUsers">
+        <div class="col" *ngFor="let item of rowItem; index as index">
             <form *ngIf="wsUserDto">
                 <div class="card user-card">
                     <div class="card-header top-userinfo">
                         <h4 class="userinfo-title">{{item.fullName}}</h4>
-                        <input type="text" class="form-control" [(ngModel)]="wsUserDto.fullName" name="fullName" placeholder="FullName..." *ngIf="(actionMode == 'mode_add' && item.id == -1) || (actionMode == 'mode_edit' && item.id == editId)" />
-                        <div class="alert alert-danger alert-dismissible" role="alert" *ngIf="enableErrorNotification && ((actionMode == 'mode_add' && item.id == -1) || (actionMode == 'mode_edit' && item.id == editId))">
-                            {{errors[0]}}                            
+                        <input type="text" class="form-control" [(ngModel)]="wsUserDto.fullName" name="fullName"
+                            placeholder="FullName..."
+                            *ngIf="(actionMode == 'mode_add' && item.id == -1) || (actionMode == 'mode_edit' && item.id == editId)" />
+                        <div class="alert alert-danger alert-dismissible" role="alert"
+                            *ngIf="errors.length > 0 && ((actionMode == 'mode_add' && item.id == -1) || (actionMode == 'mode_edit' && item.id == editId))">
+                            {{errors[0]}}
                             <button type="button" class="close" aria-label="Close" (click)="closeNotify(true)">
-                              <span aria-hidden="true">&times;</span>
+                                <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                     </div>
                     <div class="card-block">
                         <div class="user-image">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar7.png" *ngIf="isEvenIndex(index)" 
+                            <img src="https://bootdey.com/img/Content/avatar/avatar7.png" *ngIf="isEvenIndex(index)"
                                 class="img-radius" alt="User-Profile-Image" />
-    
-                            <img src="https://bootdey.com/img/Content/avatar/avatar6.png" *ngIf="!isEvenIndex(index)" 
-                            class="img-radius" alt="User-Profile-Image" />
+
+                            <img src="https://bootdey.com/img/Content/avatar/avatar6.png" *ngIf="!isEvenIndex(index)"
+                                class="img-radius" alt="User-Profile-Image" />
                         </div>
                         <div class="role-userinfo">
                             <h5>{{item.jobRole}}</h5>
-                            <input type="text" class="form-control" [(ngModel)]="wsUserDto.jobRole"  name="jobRole" placeholder="Role..."  *ngIf="(actionMode == 'mode_add' && item.id == -1) || (actionMode == 'mode_edit' && item.id == editId)" />
+                            <input type="text" class="form-control" [(ngModel)]="wsUserDto.jobRole" name="jobRole"
+                                placeholder="Role..."
+                                *ngIf="(actionMode == 'mode_add' && item.id == -1) || (actionMode == 'mode_edit' && item.id == editId)" />
                         </div>
-                        <button type="button" class="btn btn-primary button-userinfo" (click)="schedule(item.id)">Schedule</button>                                        
+                        <button type="button" class="btn btn-primary button-userinfo"
+                            (click)="schedule(item.id)">Schedule</button>
                     </div>
                     <div class="bottom-userinfo">
-                        <button type="button" (click)="details(item.id)" class="btn btn-light button-userinfo" *ngIf="(actionMode == 'mode_list' && item.id != -1) || (item.id != editId && item.id != -1)">Edit</button>&nbsp;
-                        <button type="button" (click)="cancel()" class="btn btn-light button-userinfo" *ngIf="actionMode == 'mode_edit' && item.id == editId">Cancel</button>&nbsp;
-                        <button type="submit" (click)="create(wsUserDto)" class="btn btn-light button-userinfo" *ngIf="actionMode == 'mode_add' && item.id == -1">Create</button>&nbsp;
-                        <button type="submit" (click)="update(wsUserDto)" class="btn btn-light button-userinfo" *ngIf="actionMode == 'mode_edit' && item.id == editId">Update</button>&nbsp;                        
-                        <button type="submit" (click)="delete(item)" class="btn btn-danger button-userinfo" *ngIf="item.id != -1">Remove</button>                    
+                        <button type="button" (click)="details(item.id)" class="btn btn-light button-userinfo"
+                            *ngIf="(actionMode == 'mode_list' && item.id != -1) || (item.id != editId && item.id != -1)">Edit</button>&nbsp;
+                        <button type="button" (click)="cancel()" class="btn btn-light button-userinfo"
+                            *ngIf="actionMode == 'mode_edit' && item.id == editId">Cancel</button>&nbsp;
+                        <button type="submit" (click)="create(wsUserDto)" class="btn btn-light button-userinfo"
+                            *ngIf="actionMode == 'mode_add' && item.id == -1">Create</button>&nbsp;
+                        <button type="submit" (click)="update(wsUserDto)" class="btn btn-light button-userinfo"
+                            *ngIf="actionMode == 'mode_edit' && item.id == editId">Update</button>&nbsp;
+                        <button type="submit" (click)="delete(item)" class="btn btn-danger button-userinfo"
+                            *ngIf="item.id != -1">Remove</button>
                     </div>
                 </div>
-            </form>           
-            
+            </form>
+
         </div>
-	</div>
+    </div>
 </div>

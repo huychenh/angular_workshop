@@ -14,7 +14,7 @@ import { TaskEditComponent } from './task/taskedit.component';
 import { TaskNewListComponent } from './task/tasknewlist.component';
 import { TaskProgressListComponent } from './task/taskprogresslist.component';
 
-import { UserInfoComponent } from './user/userInfo.component';
+//import { UserInfoComponent } from './user/userInfo.component';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DateFilterPipe } from './date-filter.pipe';
@@ -43,7 +43,7 @@ import { AuthGuardService } from './authentication/auth-guard.service';
     TaskProgressListComponent,
     UserComponent,
     ScheduleComponent,    
-    UserInfoComponent,
+    //UserInfoComponent,
     DateFilterPipe,
     LoginComponent,
     LoginCallBackComponent,
