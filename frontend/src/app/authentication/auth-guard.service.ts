@@ -8,12 +8,17 @@ export class AuthGuardService implements CanActivate {
     constructor(private router: Router, private authService: AuthService) { }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree {
-        if (!this.authService.isLoggedIn()) {
-            if (confirm("Unauthorized Request. Do you want to navigate to the login page?")) {
-                this.router.navigate(['/login']);
+        this.authService.isLoggedIn().then(isLoggedIn => {
+            if (!isLoggedIn) {
+                if (confirm("Unauthorized Request. Do you want to navigate to the login page?")) {
+                    this.router.navigate(['/login']);
+                }
+                return false;
             }
-            return false;
-        }
+            return true;
+        });
+
+
         return true;
     }
 }

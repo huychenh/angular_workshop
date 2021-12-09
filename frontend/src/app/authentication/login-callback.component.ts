@@ -24,7 +24,12 @@ export class LoginCallBackComponent implements OnInit {
 
   private async loginComplete(): Promise<void> {    
     await this.authService.loginComplete(window.location.href);    
-    this.router.navigate(['/']);
+
+    this.router.navigate(['/'], {
+      queryParams: { isLoggedIn: true }
+    });
+
+    //this.router.navigate(['/']);
   }
 
 

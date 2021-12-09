@@ -30,3 +30,8 @@ a.navbar-brand {
   .link-active a {    
     color: white !important;
   }
+
+  .userInfo {
+    font-size:large !important;
+    color: #0366d6;
+  }

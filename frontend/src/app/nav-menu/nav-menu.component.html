@@ -21,9 +21,11 @@
           </ul>               
         </div>    
         <div class="navbar-collapse collapse d-sm-inline-flex" [ngClass]="{ show: isExpanded }">
-          <h1>Angular Sprint</h1>                    
-          <h4 *ngIf="isLoggedIn">Username: {{email}}</h4>
-        </div>        
+          <h1>Angular Sprint</h1>
+        </div>    
+        <div class="navbar-collapse collapse d-sm-inline-flex" [ngClass]="{ show: isExpanded }">          
+          <h4 *ngIf="isLoggedIn" class="userInfo">Username: {{user.profile.email}}</h4>
+        </div>     
       </div>
     </nav>   
 </header>

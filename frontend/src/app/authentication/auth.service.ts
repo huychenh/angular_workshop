@@ -22,7 +22,7 @@ export class AuthService {
         this.userManager = new UserManager(settings);
     }
 
-    public getUser(): Promise<User | null> {        
+    public getUser(): Promise<User | null> {
         return this.userManager.getUser();
     }
 
@@ -45,36 +45,11 @@ export class AuthService {
     public async isLoggedIn(): Promise<boolean> {
         let user = await this.getUser();
         return user != null && user != undefined && !user.expired;
-
-        // .then(user => {
-        //     return user != null && user != undefined && !user.expired;
-        // });
-        // return false;
     }
 
-    // public async getAccessToken(): Promise<string> {
+    public async getUserAsync(): Promise<User | null> {
+        return await this.getUser();
+    }
 
-    //     console.log("auth.service - getAccessToken - line 57");
-    //     let token = "";
-    //     await this.getUser().then(user => {
-    //         console.log("auth.service - getAccessToken - line 60");
-    //         if (user != null && user != undefined && !user.expired) {
-    //             token = user.access_token;
-    //         }
-    //     });
-    //     console.log("auth.service - getAccessToken - line 65");
-    //     return token;
-    // }
 
-    // public async getAccessToken(): Promise<string> {
-    //     let token = "";
-    //     let obj = await this.getUser();
-    //     if(obj != undefined) {
-    //         token = obj?.access_token;
-    //     }
-    //     console.log("auth.service - getAccessToken - line 78");
-    //     return token;        
-    // }
-
-    
 }

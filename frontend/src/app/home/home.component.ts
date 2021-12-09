@@ -1,11 +1,11 @@
 import { Component } from "@angular/core";
-import { AuthService } from "../authentication/auth.service";
+import { ActivatedRoute } from "@angular/router";
 import { ITaskEvent } from "../interfaces/iTaskEvent";
 
 @Component({
     selector: 'app-home',
     templateUrl: './home.component.html',
-    styleUrls: ['./home.component.css']    
+    styleUrls: ['./home.component.css']
 })
 
 export class HomeComponent {
@@ -19,11 +19,20 @@ export class HomeComponent {
     //taskId to send to taskedit component
     public taskId: string = "";
 
-    constructor() {
+    constructor(private activeRouter: ActivatedRoute) {
         this.isModeList = true;
         this.isModeAdd = false;
         this.isModeEdit = false;
-    }   
+    }
+
+    ngOnInit() {
+        this.activeRouter.queryParams.subscribe(params => {
+            let isLoggedIn = params['isLoggedIn'];
+            if (isLoggedIn) {
+                window.location.href = window.location.origin;
+            }
+        });
+    }
 
     /**
      * Process action mode: mode_list | mode_add | mode_edit

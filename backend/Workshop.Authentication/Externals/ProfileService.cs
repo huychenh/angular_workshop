@@ -17,6 +17,11 @@ namespace Workshop.Authentication.Externals
             //Role
             var roleClaims = context.Subject.FindAll(JwtClaimTypes.Role);
             context.IssuedClaims.AddRange(roleClaims);
+
+            //Email
+            var emailClaims = context.Subject.FindAll(JwtClaimTypes.Email);
+            context.IssuedClaims.AddRange(emailClaims);
+
             return Task.CompletedTask;
         }
 

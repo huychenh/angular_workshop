@@ -14,10 +14,10 @@ import { AuthGuardService } from './authentication/auth-guard.service';
 const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
   {
-    path: 'user', component: UserComponent //, canActivate: [AuthGuardService]
+    path: 'user', component: UserComponent, canActivate: [AuthGuardService]
   },
   {
-    path: 'schedule', component: ScheduleComponent //, canActivate: [AuthGuardService] 
+    path: 'schedule', component: ScheduleComponent, canActivate: [AuthGuardService]
   },
   { path: 'login', component: LoginComponent },
   { path: 'login-callback', component: LoginCallBackComponent },
