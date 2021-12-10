@@ -3,5 +3,6 @@
  */
  export interface IWsUserCreate {    
     fullName: string;
-    jobRole: string;        
+    jobRole: string;
+    createdBy: string        
 }

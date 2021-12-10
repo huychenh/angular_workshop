@@ -78,7 +78,9 @@
             <dd class="col-sm-10">{{ scheduleDto.title }}</dd>
   
             <dt class="col-sm-2"><span style="float:right">Creator:</span></dt>
-            <dd class="col-sm-10">{{ scheduleDto.creator }}</dd>
+            <dd class="col-sm-10">
+              {{ scheduleDto.creator }}
+            </dd>
   
             <dt class="col-sm-2"><span style="float:right">Description:</span></dt>
             <dd class="col-sm-10">{{ scheduleDto.description }}</dd>
@@ -152,6 +154,11 @@
               <dt class="col-sm-2"><span style="float:right">Creator:</span></dt>
               <dd class="col-sm-10">
                 <input type="text" [(ngModel)]="scheduleDto.creator" class="form-control" name="creator" placeholder="Creator" ng-maxlength="255" />
+
+                <!-- <select>
+                  <option *ngFor="let wsUser of wsUsers" value="{{wsUser.id}}">{{wsUser.fullname}}</option>
+               </select> -->
+
               </dd>
   
               <dt class="col-sm-2"><span style="float:right">Description:</span></dt>

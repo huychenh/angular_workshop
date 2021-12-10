@@ -5,17 +5,21 @@ import { IScheduleDto } from '../interfaces/iScheduleDto';
 import { IScheduleCreate } from '../interfaces/IScheduleCreate';
 import { IScheduleDelete } from '../interfaces/IScheduleDelete';
 import { ScheduleService } from './schedule.service';
+import { AuthService } from '../authentication/auth.service';
+import { UserService } from '../user/user.service';
+import { IWsUserDto } from '../interfaces/iWsUserDto';
 
 @Component({
   selector: 'app-schedule-component',
   templateUrl: './schedule.component.html',
-  providers: [ScheduleService]
+  providers: [ScheduleService, UserService]
 })
 
 export class ScheduleComponent {
 
   //Declare variables.
   public schedules: IScheduleDto[] = [];
+  public wsUsers: IWsUserDto[] = [];
   public datePickerFormat = 'yyyy-MM-dd HH:mm';
 
   public dCreateTimeStart = new Date();
@@ -29,25 +33,33 @@ export class ScheduleComponent {
 
   public isLoading: boolean = false;
   public scheduleDto: IScheduleDto = this.scheduleObject();
-  private activeRouter: ActivatedRoute;
   public userId: number = 0;
+  private user: any;
 
-  private scheduleService: ScheduleService;
-
-  constructor(service: ScheduleService, activeRoute: ActivatedRoute) {
-    this.scheduleService = service;
-    this.activeRouter = activeRoute;
+  constructor(private scheduleService: ScheduleService
+    , private activeRouter: ActivatedRoute
+    , private authService: AuthService
+    , private userService: UserService) {
   }
 
   ngOnInit() {
 
-    this.activeRouter.queryParams.subscribe(params => {
+    this.activeRouter.queryParams.subscribe((params): void => {
       this.userId = params['userId'];
     });
 
     //Get the list by userId
     this.getAll();
+
+    this.getUserLogin();
+
+    this.getAllWsUser();
   }
+
+  private async getUserLogin(): Promise<void> {
+    this.user = await this.authService.getUserAsync();
+  }
+
 
   /**
     * Get the list
@@ -59,6 +71,20 @@ export class ScheduleComponent {
       this.callbackHandler("LISTBYUSER", result);
     }, (errorResponse): void => {
       this.callbackHandler("LISTBYUSER", null, errorResponse);
+    });
+
+  }
+
+  /**
+    * Get the list of WsUser
+    */
+  public getAllWsUser(): void {
+    this.isLoading = true;
+
+    this.userService.getAll().subscribe(result => {
+      this.callbackHandler("LISTUSER", result);
+    }, (errorResponse): void => {
+      this.callbackHandler("LISTUSER", null, errorResponse);
     });
 
   }
@@ -112,6 +138,11 @@ export class ScheduleComponent {
      */
   public create(scheduleDto: IScheduleDto): void {
 
+    let createdBy: string = "System";
+    if (this.user != undefined && this.user != null) {
+      createdBy = this.user.profile.name;
+    }
+
     var model: IScheduleCreate = {
       title: scheduleDto.title,
       creator: scheduleDto.creator,
@@ -119,7 +150,8 @@ export class ScheduleComponent {
       location: scheduleDto.location,
       timeStart: "",
       timeEnd: "",
-      wsUserId: this.userId != undefined ? this.userId : 1
+      wsUserId: this.userId != undefined ? this.userId : 1,
+      createdBy: createdBy
     };
 
     //timeStart
@@ -186,7 +218,7 @@ export class ScheduleComponent {
   /**
    * Edit
    */
-  public edit(scheduleDto: IScheduleDto) {
+  public edit(scheduleDto: IScheduleDto): void {
     this.isLoading = true;
 
     //timeStart
@@ -207,6 +239,13 @@ export class ScheduleComponent {
     minute = this.dTimeEnd.getMinutes();
 
     scheduleDto.timeEnd = `${year}-${month}-${day} ${hour}:${minute}`;
+
+    let modifiedBy: string = "System";
+    if (this.user != undefined && this.user != null) {
+      modifiedBy = this.user.profile.name;
+    }
+
+    scheduleDto.modifiedBy = modifiedBy;
 
     this.scheduleService.edit(scheduleDto).subscribe(result => {
       this.callbackHandler("EDIT", result);
@@ -238,9 +277,13 @@ export class ScheduleComponent {
    */
   public delete(scheduleDto: IScheduleDto) {
 
+    let modifiedBy: string = "System";
+    if (this.user != undefined && this.user != null) {
+      modifiedBy = this.user.profile.name;
+    }
     var model: IScheduleDelete = {
       id: scheduleDto.id,
-      modifiedBy: "System"
+      modifiedBy: modifiedBy
     };
 
     this.scheduleService.delete(model).subscribe(result => {
@@ -366,6 +409,13 @@ export class ScheduleComponent {
 
         if (result != null && result != undefined) {
           this.schedules = result.schedules;
+        }
+        break;
+
+      case "LISTUSER":
+
+        if (result != null && result != undefined) {
+          this.wsUsers = result.wsUsers;
         }
         break;
 

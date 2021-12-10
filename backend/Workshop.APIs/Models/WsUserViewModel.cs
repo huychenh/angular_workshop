@@ -10,6 +10,8 @@
             public string FullName { get; set; }
 
             public string JobRole { get; set; }
+
+            public string CreatedBy { get; set; }
         }
 
         /// <summary>
@@ -18,8 +20,6 @@
         public class Edit : Create
         {
             public int Id { get; set; }
-
-            public string CreatedBy { get; set; }
 
             public bool IsActive { get; set; }
 

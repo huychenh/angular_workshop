@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Workshop.APIs.Models;
 using Workshop.APIs.Repositories;
@@ -158,10 +159,9 @@ namespace Workshop.APIs.Controllers
                     var obj = new WsUserModel
                     {
                         FullName = model.FullName,
-                        JobRole = model.JobRole
+                        JobRole = model.JobRole,
+                        CreatedBy = model.CreatedBy
                     };
-
-                    obj.CreatedBy = User.Identity.IsAuthenticated ? User.Identity.Name : "System";
 
                     int id = _userRepository.Insert(obj);
                     if (id > 0)
@@ -239,8 +239,7 @@ namespace Workshop.APIs.Controllers
                     {
                         obj.FullName = model.FullName;
                         obj.JobRole = model.JobRole;
-
-                        obj.ModifiedBy = User.Identity.IsAuthenticated ? User.Identity.Name : "System";
+                        obj.ModifiedBy = model.ModifiedBy;
 
                         bool result = _userRepository.Update(obj);
                         if (result)

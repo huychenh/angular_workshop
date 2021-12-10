@@ -20,8 +20,12 @@ namespace Workshop.APIs.Repositories.Implement
         public bool Delete(WsUserModel model)
         {
             bool result = false;
+            using var transaction = _context.Database.BeginTransaction();
             try
             {
+                transaction.CreateSavepoint("BeforeDeleteWsUser");
+
+                //Delete users
                 var obj = _context.WsUsers.FirstOrDefault(k => k.IsActive == true && k.IsDeleted == false && k.Id == model.Id);
                 if (obj != null)
                 {
@@ -31,10 +35,27 @@ namespace Workshop.APIs.Repositories.Implement
                     obj.ModifiedDate = DateTime.Now;
                 }
                 _context.SaveChanges();
+
+                //Delete schedule
+                var list = _context.Schedules.Where(k => k.IsActive == true && k.IsDeleted == false && k.WsUserId == model.Id).ToList();
+                if (list != null && list.Count > 0)
+                {
+                    foreach (var item in list)
+                    {
+                        item.IsActive = false;
+                        item.IsDeleted = true;
+                        item.ModifiedBy = model.ModifiedBy;
+                        item.ModifiedDate = DateTime.Now;
+                    }                    
+                }
+                _context.SaveChanges();
+
+                transaction.Commit();
                 result = true;
             }
             catch (Exception ex)
             {
+                transaction.RollbackToSavepoint("BeforeDeleteWsUser");
                 throw new Exception(ex.Message);
             }
 

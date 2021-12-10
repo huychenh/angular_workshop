@@ -8,5 +8,6 @@
     location: string;
     timeStart: string;
     timeEnd: string;
-    wsUserId: number; 
+    wsUserId: number;
+    createdBy: string; 
 }

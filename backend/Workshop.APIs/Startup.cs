@@ -70,7 +70,7 @@ namespace Workshop.APIs
             app.UseHttpsRedirection();
             app.UseCors();
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

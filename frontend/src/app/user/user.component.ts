@@ -5,6 +5,7 @@ import { IWsUserDto } from "../interfaces/iWsUserDto";
 import { IWsUserCreate } from '../interfaces/iWsUserCreate';
 import { IWsUserDelete } from '../interfaces/iWsUserDelete';
 import { UserService } from './user.service';
+import { AuthService } from '../authentication/auth.service';
 
 @Component({
   selector: 'app-user-component',
@@ -23,15 +24,15 @@ export class UserComponent {
   public isLoading: boolean = false;
 
   public actionMode: string = "mode_list";
-  public wsUserDto: IWsUserDto = this.wsUserObject();
-  //public enableErrorNotification: boolean = false;
+  public wsUserDto: IWsUserDto = this.wsUserObject();  
   public editId: number = 0;
   private router: Router;
+  private user: any;
 
 
   private userService: UserService;
 
-  constructor(service: UserService, route: Router) {
+  constructor(service: UserService, route: Router, private authService: AuthService) {
     this.userService = service;
     this.router = route;
   }
@@ -39,6 +40,12 @@ export class UserComponent {
   ngOnInit() {
     //Get the list.
     this.getAll();
+
+    this.getUserLogin();
+  }
+
+  private async getUserLogin(): Promise<void> {
+    this.user = await this.authService.getUserAsync();
   }
 
 
@@ -107,6 +114,14 @@ export class UserComponent {
      * @param userDto : IWsUserDto
      */
   public update(wsUserDto: IWsUserDto): void {
+
+    let modifiedBy: string = "System";
+    if (this.user != undefined && this.user != null) {
+      modifiedBy = this.user.profile.name;
+    }
+
+    wsUserDto.modifiedBy = modifiedBy;
+
     this.userService.edit(wsUserDto).subscribe(result => {
       this.callbackHandler("EDIT", result);
     }, (errorResponse): void => {
@@ -121,9 +136,15 @@ export class UserComponent {
      */
   public create(wsUserDto: IWsUserDto): void {
 
+    let createdBy: string = "System";
+    if (this.user != undefined && this.user != null) {
+      createdBy = this.user.profile.name;
+    }
+
     let model: IWsUserCreate = {
       fullName: wsUserDto.fullName,
-      jobRole: wsUserDto.jobRole
+      jobRole: wsUserDto.jobRole,
+      createdBy: createdBy
     };
 
     this.userService.create(model).subscribe(result => {
@@ -205,9 +226,14 @@ export class UserComponent {
       return;
     }
 
+    let modifiedBy: string = "System";
+    if (this.user != undefined && this.user != null) {
+      modifiedBy = this.user.profile.name;
+    }
+
     var model: IWsUserDelete = {
       id: wsUserDto.id,
-      modifiedBy: "System"
+      modifiedBy: modifiedBy
     };
 
     this.userService.delete(model).subscribe(result => {

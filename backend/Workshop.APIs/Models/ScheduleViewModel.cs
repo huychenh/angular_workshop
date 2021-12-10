@@ -22,6 +22,8 @@ namespace Workshop.APIs.Models
             public string TimeEnd { get; set; }
 
             public int WsUserId { get; set; }
+
+            public string CreatedBy { get; set; }
         }
 
         /// <summary>
@@ -30,8 +32,6 @@ namespace Workshop.APIs.Models
         public class Edit : Create
         {
             public int Id { get; set; }
-
-            public string CreatedBy { get; set; }
 
             public bool IsActive { get; set; }
 

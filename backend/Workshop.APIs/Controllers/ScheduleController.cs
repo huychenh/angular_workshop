@@ -202,10 +202,10 @@ namespace Workshop.APIs.Controllers
                         Location = model.Location,
                         TimeStart = Convert.ToDateTime(model.TimeStart),
                         TimeEnd = Convert.ToDateTime(model.TimeEnd),
-                        WsUserId = model.WsUserId
+                        WsUserId = model.WsUserId,
+                        CreatedBy = model.CreatedBy
                     };
 
-                    obj.CreatedBy = User.Identity.IsAuthenticated ? User.Identity.Name : "System";
 
                     int id = _scheduleRepository.Insert(obj);
                     if (id > 0)
@@ -298,7 +298,7 @@ namespace Workshop.APIs.Controllers
                         obj.TimeStart = Convert.ToDateTime(model.TimeStart);
                         obj.TimeEnd = Convert.ToDateTime(model.TimeEnd);
                         obj.WsUserId = model.WsUserId;
-                        obj.ModifiedBy = User.Identity.IsAuthenticated ? User.Identity.Name : "System";
+                        obj.ModifiedBy = model.ModifiedBy;
                         obj.IsActive = model.IsActive;
                         obj.IsDeleted = model.IsDeleted;
 
