@@ -47,3 +47,4 @@ D:\NashTech\AngularJS\workshop\backend\Workshop.Test\obj\Debug\net5.0\ref\Worksh
 D:\NashTech\AngularJS\workshop\backend\Workshop.Test\obj\Debug\net5.0\Workshop.Test.pdb
 D:\NashTech\AngularJS\workshop\backend\Workshop.Test\obj\Debug\net5.0\Workshop.Test.genruntimeconfig.cache
 D:\NashTech\AngularJS\workshop\backend\Workshop.Test\obj\Debug\net5.0\Razor\Views\Shared\_LoginPartial.cshtml.g.cs
+D:\NashTech\AngularJS\workshop\backend\Workshop.Test\obj\Debug\net5.0\Workshop.Test.csproj.AssemblyReference.cache
