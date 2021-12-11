@@ -8,8 +8,6 @@ import { IWsUserResponse } from '../interfaces/iWsUserResponse';
 @Injectable()
 export class UserService {
 
-    private httpProtocol: HttpClient;
-
     //Default headers for http.
     private httpOptions = {
         headers: new HttpHeaders({
@@ -20,8 +18,7 @@ export class UserService {
     //API URL
     private apiBaseUrl: string = GlobalComponent.apiBaseUrl;
 
-    constructor(http: HttpClient) {
-        this.httpProtocol = http;
+    constructor(private httpProtocol: HttpClient) {        
     }
 
     /**

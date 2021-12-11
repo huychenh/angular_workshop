@@ -14,8 +14,7 @@ import { TaskService } from "./task.service";
 
 export class TaskCreateComponent {
 
-    //Declare variables.
-    private taskService: TaskService;
+    //Declare variables
     public taskDto: ITaskDto = this.taskObject();
 
     public errors: string[] = [];
@@ -24,8 +23,7 @@ export class TaskCreateComponent {
     //Using Output to send message to Parent Component
     @Output() eventToEmit = new EventEmitter<ITaskEvent>();
 
-    constructor(service: TaskService) {
-        this.taskService = service;
+    constructor(private taskService: TaskService) {
     }
 
     /**

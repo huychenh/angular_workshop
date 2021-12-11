@@ -24,17 +24,11 @@ export class UserComponent {
   public isLoading: boolean = false;
 
   public actionMode: string = "mode_list";
-  public wsUserDto: IWsUserDto = this.wsUserObject();  
+  public wsUserDto: IWsUserDto = this.wsUserObject();
   public editId: number = 0;
-  private router: Router;
   private user: any;
 
-
-  private userService: UserService;
-
-  constructor(service: UserService, route: Router, private authService: AuthService) {
-    this.userService = service;
-    this.router = route;
+  constructor(private userService: UserService, private router: Router, private authService: AuthService) {
   }
 
   ngOnInit() {
@@ -162,8 +156,6 @@ export class UserComponent {
     this.router.navigate(['/schedule/'], {
       queryParams: { userId: id }
     });
-
-
   }
 
 
@@ -190,7 +182,6 @@ export class UserComponent {
     */
   public closeNotify(isErrorNotify: boolean = false): void {
     if (isErrorNotify) {
-      //this.enableErrorNotification = false;
       this.errors = [];
     } else {
       this.infoMessage = "";

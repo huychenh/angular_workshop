@@ -8,8 +8,6 @@ import { IScheduleResponse } from '../interfaces/iScheduleResponse';
 @Injectable()
 export class ScheduleService {
 
-    private httpProtocol: HttpClient;
-
     //Default headers for http.
     private httpOptions = {
         headers: new HttpHeaders({
@@ -20,8 +18,7 @@ export class ScheduleService {
     //API URL
     private apiBaseUrl: string = GlobalComponent.apiBaseUrl;
 
-    constructor(http: HttpClient) {
-        this.httpProtocol = http;
+    constructor(private httpProtocol: HttpClient) {
     }
 
     /**
@@ -47,7 +44,7 @@ export class ScheduleService {
      * @param model 
      * @returns 
      */
-     public delete(model: any): Observable<any> {
+    public delete(model: any): Observable<any> {
         return this.httpProtocol.put<IScheduleResponse>(`${this.apiBaseUrl}schedule/delete`, model, this.httpOptions);
     }
 
@@ -64,7 +61,7 @@ export class ScheduleService {
      * getAll
      * @returns 
      */
-    public getListByUser(userId: number = 0): Observable<any> {        
+    public getListByUser(userId: number = 0): Observable<any> {
         return this.httpProtocol.get<IScheduleResponse>(`${this.apiBaseUrl}schedule/listByUser/${userId}`);
     }
 }

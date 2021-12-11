@@ -26,11 +26,7 @@ export class TaskDoneListComponent {
     public isActiveTaskItem: boolean = false;
     public idActiveTaskItem: number = 0;
 
-
-    private taskService: TaskService;
-
-    constructor(service: TaskService) {
-        this.taskService = service;
+    constructor(private taskService: TaskService) {
     }
 
     ngOnInit() {
@@ -43,9 +39,9 @@ export class TaskDoneListComponent {
      */
     public getAll(status: string): void {
 
-        this.taskService.getListByStatus(status).subscribe(result => {        
+        this.taskService.getListByStatus(status).subscribe(result => {
             this.callbackHandler("LISTBYSTATUS", result);
-        }, (errorResponse): void => {        
+        }, (errorResponse): void => {
             this.callbackHandler("LISTBYSTATUS", null, errorResponse);
         });
     }
@@ -93,7 +89,7 @@ export class TaskDoneListComponent {
         this.taskService.details(id).subscribe(result => {
             this.callbackHandler("DETAILS", result);
         }, (errorResponse): void => {
-            this.callbackHandler("DETAILS", null, errorResponse);       
+            this.callbackHandler("DETAILS", null, errorResponse);
         });
     }
 
@@ -105,8 +101,6 @@ export class TaskDoneListComponent {
     public isActiveItem(id: number) {
         return (id == this.idActiveTaskItem && this.isActiveTaskItem);
     }
-
-
 
     /**
      * 
@@ -137,7 +131,7 @@ export class TaskDoneListComponent {
             case "LISTBYSTATUS":
 
                 if (result != null && result != undefined) {
-                    this.tasks = result.tasks;               
+                    this.tasks = result.tasks;
                 }
                 break;
 

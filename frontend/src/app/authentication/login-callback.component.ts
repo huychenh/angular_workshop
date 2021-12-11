@@ -10,12 +10,7 @@ import { AuthService } from './auth.service';
 
 export class LoginCallBackComponent implements OnInit {
 
-  private authService: AuthService;
-  private router: Router;
-
-  constructor(service: AuthService, route: Router) {
-    this.authService = service;
-    this.router = route;
+  constructor(private authService: AuthService, private router: Router) {    
   }
 
   ngOnInit() {
@@ -28,8 +23,6 @@ export class LoginCallBackComponent implements OnInit {
     this.router.navigate(['/'], {
       queryParams: { isLoggedIn: true }
     });
-
-    //this.router.navigate(['/']);
   }
 
 

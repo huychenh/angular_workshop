@@ -25,10 +25,7 @@ export class TaskProgressListComponent {
     //Using Output to send message to Parent Component
     @Output() eventToEmit = new EventEmitter<ITaskEvent>();
 
-    private taskService: TaskService;
-
-    constructor(service: TaskService) {
-        this.taskService = service;
+    constructor(private taskService: TaskService) {
     }
 
     ngOnInit() {
@@ -42,10 +39,10 @@ export class TaskProgressListComponent {
     public getAll(status: string): void {
         this.isLoading = true;
 
-        this.taskService.getListByStatus(status).subscribe(result => {            
+        this.taskService.getListByStatus(status).subscribe(result => {
             this.callbackHandler("LISTBYSTATUS", result);
         }, (errorResponse): void => {
-            this.callbackHandler("LISTBYSTATUS", null, errorResponse);            
+            this.callbackHandler("LISTBYSTATUS", null, errorResponse);
         });
     }
 

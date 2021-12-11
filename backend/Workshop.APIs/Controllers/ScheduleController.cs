@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -15,7 +16,7 @@ using Workshop.Common.Responses.Objects;
 namespace Workshop.APIs.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController]    
     public class ScheduleController : ControllerBase
     {
         private readonly IScheduleRepository _scheduleRepository;
@@ -182,7 +183,12 @@ namespace Workshop.APIs.Controllers
                     ModelState.AddModelError("Title", "Title required");
                 }
 
-                if (string.IsNullOrEmpty(model.Creator))
+                //if (string.IsNullOrEmpty(model.Creator))
+                //{
+                //    ModelState.AddModelError("Creator", "Creator required");
+                //}
+
+                if (model.WsUserId < 1)
                 {
                     ModelState.AddModelError("Creator", "Creator required");
                 }
@@ -275,7 +281,12 @@ namespace Workshop.APIs.Controllers
                     ModelState.AddModelError("Title", "Title required");
                 }
 
-                if (string.IsNullOrEmpty(model.Creator))
+                //if (string.IsNullOrEmpty(model.Creator))
+                //{
+                //    ModelState.AddModelError("Creator", "Creator required");
+                //}
+
+                if (model.WsUserId < 1)
                 {
                     ModelState.AddModelError("Creator", "Creator required");
                 }

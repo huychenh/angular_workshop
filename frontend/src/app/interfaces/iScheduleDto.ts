@@ -1,3 +1,5 @@
+import { IWsUserDto } from "./iWsUserDto";
+
 /**
  * Interface for schedule
  */
@@ -9,7 +11,9 @@
     location: string;
     timeStart: string;
     timeEnd: string;
+
     wsUserId: number;
+    wsUser: IWsUserDto;
     
     createdDate: string;
     createdBy: string;

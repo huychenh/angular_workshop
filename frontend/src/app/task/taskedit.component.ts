@@ -16,7 +16,6 @@ export class TaskEditComponent implements OnInit {
 
     //Declare variables.
     public taskDto: ITaskDto = this.taskObject();
-    private taskService: TaskService;
 
     public errors: string[] = [];
     public infoMessage: string = "";
@@ -27,8 +26,7 @@ export class TaskEditComponent implements OnInit {
     //Using Output to send message to Parent Component
     @Output() eventToEmit = new EventEmitter<ITaskEvent>();
 
-    constructor(service: TaskService) {
-        this.taskService = service;
+    constructor(private taskService: TaskService) {
     }
 
     ngOnInit() {
@@ -165,14 +163,14 @@ export class TaskEditComponent implements OnInit {
                         //Sucess
                         this.infoMessage = notification.infoMessage;
                         this.errors = [];
-                    }  else {
+                    } else {
                         let arrays = notification.detailErrorMessage;
                         this.errors = this.setErrors(arrays);
                         this.infoMessage = "";
                     }
                 }
 
-                break;            
+                break;
 
             default: //case "DETAILS"
                 if (result != null && result != undefined) {

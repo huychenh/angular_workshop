@@ -36,10 +36,10 @@ export class ScheduleComponent {
   public userId: number = 0;
   private user: any;
 
-  constructor(private scheduleService: ScheduleService
-    , private activeRouter: ActivatedRoute
-    , private authService: AuthService
-    , private userService: UserService) {
+  constructor(private scheduleService: ScheduleService,
+    private activeRouter: ActivatedRoute,
+    private authService: AuthService,
+    private userService: UserService) {
   }
 
   ngOnInit() {
@@ -52,8 +52,6 @@ export class ScheduleComponent {
     this.getAll();
 
     this.getUserLogin();
-
-    this.getAllWsUser();
   }
 
   private async getUserLogin(): Promise<void> {
@@ -99,8 +97,6 @@ export class ScheduleComponent {
     }, (errorResponse): void => {
       this.callbackHandler("DETAILS", null, errorResponse);
     });
-
-
   }
 
   /**
@@ -130,6 +126,8 @@ export class ScheduleComponent {
 
     this.dCreateTimeStart = new Date();
     this.dCreateTimeEnd = new Date();
+
+    this.getAllWsUser();
   };
 
   /**
@@ -150,7 +148,7 @@ export class ScheduleComponent {
       location: scheduleDto.location,
       timeStart: "",
       timeEnd: "",
-      wsUserId: this.userId != undefined ? this.userId : 1,
+      wsUserId: this.scheduleDto.wsUser.id,
       createdBy: createdBy
     };
 
@@ -206,6 +204,9 @@ export class ScheduleComponent {
     this.errors = [];
     this.infoMessage = "";
 
+    //Load list wsUsers
+    this.getAllWsUser();
+
     this.scheduleService.details(id).subscribe(result => {
       this.callbackHandler("DETAILS", result);
     }, (errorResponse): void => {
@@ -245,6 +246,7 @@ export class ScheduleComponent {
       modifiedBy = this.user.profile.name;
     }
 
+    scheduleDto.wsUserId = scheduleDto.wsUser.id;
     scheduleDto.modifiedBy = modifiedBy;
 
     this.scheduleService.edit(scheduleDto).subscribe(result => {
@@ -294,8 +296,6 @@ export class ScheduleComponent {
 
   };
 
-
-
   /**
      * Re-constructor the object.
      */
@@ -310,6 +310,17 @@ export class ScheduleComponent {
       timeStart: "",
       timeEnd: "",
       wsUserId: -1,
+      wsUser: {
+        id: 0,
+        fullName: "",
+        jobRole: "",
+        createdDate: "",
+        createdBy: "",
+        modifiedDate: "",
+        modifiedBy: "",
+        isActive: false,
+        isDeleted: false
+      },
       createdDate: "",
       createdBy: "",
       modifiedDate: "",
@@ -416,6 +427,17 @@ export class ScheduleComponent {
 
         if (result != null && result != undefined) {
           this.wsUsers = result.wsUsers;
+          this.scheduleDto.wsUser = {
+            id: this.wsUsers[0].id,
+            fullName: this.wsUsers[0].fullName,
+            jobRole: "",
+            createdDate: "",
+            createdBy: "",
+            modifiedDate: "",
+            modifiedBy: "",
+            isActive: false,
+            isDeleted: false
+          };
         }
         break;
 

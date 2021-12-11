@@ -14,7 +14,6 @@ import { TaskEditComponent } from './task/taskedit.component';
 import { TaskNewListComponent } from './task/tasknewlist.component';
 import { TaskProgressListComponent } from './task/taskprogresslist.component';
 
-//import { UserInfoComponent } from './user/userInfo.component';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DateFilterPipe } from './date-filter.pipe';
@@ -42,8 +41,7 @@ import { AuthGuardService } from './authentication/auth-guard.service';
     TaskNewListComponent,
     TaskProgressListComponent,
     UserComponent,
-    ScheduleComponent,    
-    //UserInfoComponent,
+    ScheduleComponent,
     DateFilterPipe,
     LoginComponent,
     LoginCallBackComponent,
@@ -51,15 +49,15 @@ import { AuthGuardService } from './authentication/auth-guard.service';
     LogoutComponent
   ],
   imports: [
-    BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),    
+    BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    OwlDateTimeModule, 
+    OwlDateTimeModule,
     OwlNativeDateTimeModule,
     BrowserAnimationsModule
   ],
   providers: [DatePipe, AuthService, AuthGuardService],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }

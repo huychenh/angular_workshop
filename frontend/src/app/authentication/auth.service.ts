@@ -1,26 +1,15 @@
 import { Injectable } from '@angular/core';
 import { User, UserManager } from 'oidc-client';
-import { Observable } from 'rxjs';
+import { GlobalComponent } from '../global.component';
 
 @Injectable()
 export class AuthService {
 
     private userManager: UserManager;
+    private settings: any = GlobalComponent.authenticationSetting;
 
     constructor() {
-
-        const settings = {
-            authority: 'https://localhost:44321/',
-            client_id: 'angular_client',
-            redirect_uri: 'http://localhost:4200/login-callback',
-            monitorSession: false,
-            post_logout_redirect_uri: 'http://localhost:4200/logout-callback',
-            response_type: 'code', // for Auth Code flow
-            scope: 'openid profile email phone',
-            automaticSilentRenew: true,
-            includeIdTokenInSilentRenew: true
-        };
-        this.userManager = new UserManager(settings);
+        this.userManager = new UserManager(this.settings);
     }
 
     public getUser(): Promise<User | null> {

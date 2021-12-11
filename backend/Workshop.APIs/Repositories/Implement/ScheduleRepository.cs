@@ -70,7 +70,13 @@ namespace Workshop.APIs.Repositories.Implement
         {
             try
             {
-                return _context.Schedules.FirstOrDefault(k => k.IsActive == true && k.IsDeleted == false && k.Id == id);
+                var schedule = _context.Schedules.FirstOrDefault(k => k.IsActive == true && k.IsDeleted == false && k.Id == id);
+                if (schedule != null)
+                {
+                    var wsUser = _context.WsUsers.FirstOrDefault(k => k.IsActive == true && k.IsDeleted == false && k.Id == schedule.WsUserId);
+                    schedule.WsUser = wsUser;
+                }
+                return schedule;
             }
             catch (Exception ex)
             {
@@ -89,10 +95,13 @@ namespace Workshop.APIs.Repositories.Implement
                 }
                 else
                 {
+                    var wsUser = _context.WsUsers.FirstOrDefault(k => k.Id == model.WsUserId);
+                    var creator = wsUser != null ? wsUser.FullName : "";
+
                     SqlParameter[] @params =
                     {
                         new SqlParameter("@Title", model.Title),
-                        new SqlParameter("@Creator", model.Creator),
+                        new SqlParameter("@Creator", creator),
                         new SqlParameter("@Description", model.Description),
                         new SqlParameter("@Location", model.Location),
                         new SqlParameter("@TimeStart", model.TimeStart),
@@ -126,11 +135,14 @@ namespace Workshop.APIs.Repositories.Implement
                 }
                 else
                 {
+                    var wsUser = _context.WsUsers.FirstOrDefault(k => k.Id == model.WsUserId);
+                    var creator = wsUser != null ? wsUser.FullName : "";
+
                     SqlParameter[] @params =
                     {
                         new SqlParameter("@Id", model.Id),
                         new SqlParameter("@Title", model.Title),
-                        new SqlParameter("@Creator", model.Creator),
+                        new SqlParameter("@Creator", creator),
                         new SqlParameter("@Description", model.Description),
                         new SqlParameter("@Location", model.Location),
                         new SqlParameter("@TimeStart", model.TimeStart),

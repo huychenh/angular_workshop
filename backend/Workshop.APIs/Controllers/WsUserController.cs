@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using Workshop.APIs.Models;
 using Workshop.APIs.Repositories;
 using Workshop.Common.Models;
@@ -17,7 +16,7 @@ using Workshop.Common.Responses.Objects;
 namespace Workshop.APIs.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController]    
     public class WsUserController : ControllerBase
     {
         private readonly IWsUserRepository _userRepository;

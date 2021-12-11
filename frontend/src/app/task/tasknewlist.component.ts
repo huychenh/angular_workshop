@@ -24,10 +24,7 @@ export class TaskNewListComponent {
     //Using Output to send message to Parent Component
     @Output() eventToEmit = new EventEmitter<ITaskEvent>();
 
-    private taskService: TaskService;
-
-    constructor(service: TaskService) {
-        this.taskService = service;
+    constructor(private taskService: TaskService) {
     }
 
     ngOnInit(): void {

@@ -1,5 +1,5 @@
-import {Pipe, PipeTransform} from '@angular/core';
-import {DatePipe} from '@angular/common';
+import { Pipe, PipeTransform } from '@angular/core';
+import { DatePipe } from '@angular/common';
 
 @Pipe({
   name: 'dateFilter'
@@ -14,6 +14,6 @@ export class DateFilterPipe implements PipeTransform {
       return '';
     }
     format = format || 'short';
-    return value && typeof(value) === 'object' ? this.datePipe.transform(value, format) : '';
+    return value && typeof (value) === 'object' ? this.datePipe.transform(value, format) : '';
   }
 }

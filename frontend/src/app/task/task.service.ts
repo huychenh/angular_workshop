@@ -8,8 +8,6 @@ import { Observable } from 'rxjs';
 @Injectable()
 export class TaskService {
 
-    private httpProtocol: HttpClient;
-
     //Default headers for http.
     private httpOptions = {
         headers: new HttpHeaders({
@@ -20,8 +18,7 @@ export class TaskService {
     //API URL
     private apiBaseUrl: string = GlobalComponent.apiBaseUrl;
 
-    constructor(http: HttpClient) {
-        this.httpProtocol = http;
+    constructor(private httpProtocol: HttpClient) {        
     }
 
     /**

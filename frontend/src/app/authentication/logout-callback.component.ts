@@ -10,18 +10,11 @@ import { AuthService } from './auth.service';
 
 export class LogoutCallBackComponent implements OnInit {
 
-  private router: Router;
-  private authService: AuthService;
-
-  constructor(route: Router, service: AuthService) {    
-    this.router = route;
-    this.authService = service;
+  constructor(private router: Router, private authService: AuthService) {        
   }
   
   ngOnInit() {
     this.authService.logoutCompleteAsync(window.location.href);
     this.router.navigate(['/']);
   }
-
-
 }
